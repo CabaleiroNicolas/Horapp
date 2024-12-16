@@ -24,8 +24,8 @@ public class User{
     private String lastname;
     private String email;
 
-    @OneToMany(mappedBy = "user")
-    private List<Major> majorList;
+    @OneToOne(mappedBy = "user")
+    private Major major;
 
     @OneToMany(mappedBy = "user")
     private List<Course> coursesList;

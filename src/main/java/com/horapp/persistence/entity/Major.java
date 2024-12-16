@@ -23,7 +23,7 @@ public class Major {
     private String majorName;
     private boolean deleted;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "id_user")
     private User user;
 
