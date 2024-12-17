@@ -1,18 +1,10 @@
 package com.horapp.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 @Table(name = "schedule")
 public class Schedule {
     @Id
@@ -30,4 +22,45 @@ public class Schedule {
     @JoinColumn(name = "id_course", nullable = false)
     private Course course;
 
+    public Schedule(long idSchedule, String courseGroup, List<DayAndTime> daysAndTimes, Course course) {
+        this.idSchedule = idSchedule;
+        this.courseGroup = courseGroup;
+        this.daysAndTimes = daysAndTimes;
+        this.course = course;
+    }
+
+    public Schedule() {
+    }
+
+    public long getIdSchedule() {
+        return idSchedule;
+    }
+
+    public void setIdSchedule(long idSchedule) {
+        this.idSchedule = idSchedule;
+    }
+
+    public String getCourseGroup() {
+        return courseGroup;
+    }
+
+    public void setCourseGroup(String courseGroup) {
+        this.courseGroup = courseGroup;
+    }
+
+    public List<DayAndTime> getDaysAndTimes() {
+        return daysAndTimes;
+    }
+
+    public void setDaysAndTimes(List<DayAndTime> daysAndTimes) {
+        this.daysAndTimes = daysAndTimes;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 }

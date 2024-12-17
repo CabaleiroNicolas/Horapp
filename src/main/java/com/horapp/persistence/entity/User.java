@@ -1,18 +1,10 @@
 package com.horapp.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 @Table(name = "user")
 public class User{
     @Id
@@ -33,4 +25,81 @@ public class User{
     @OneToMany(mappedBy = "user")
     private List<TimeTable> timeTablesList;
 
+    public User() {
+    }
+
+    public User(long idUser, String username, String name, String lastname, String email, Major major, List<Course> coursesList, List<TimeTable> timeTablesList) {
+        this.idUser = idUser;
+        this.username = username;
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.major = major;
+        this.coursesList = coursesList;
+        this.timeTablesList = timeTablesList;
+    }
+
+    public long getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(long idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Major getMajor() {
+        return major;
+    }
+
+    public void setMajor(Major major) {
+        this.major = major;
+    }
+
+    public List<Course> getCoursesList() {
+        return coursesList;
+    }
+
+    public void setCoursesList(List<Course> coursesList) {
+        this.coursesList = coursesList;
+    }
+
+    public List<TimeTable> getTimeTablesList() {
+        return timeTablesList;
+    }
+
+    public void setTimeTablesList(List<TimeTable> timeTablesList) {
+        this.timeTablesList = timeTablesList;
+    }
 }
