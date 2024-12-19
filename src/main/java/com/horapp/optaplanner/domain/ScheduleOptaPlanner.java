@@ -1,13 +1,11 @@
-package com.horapp.domain;
+package com.horapp.optaplanner.domain;
 
-import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class ScheduleOptaPlanner {
     private String courseGroup;
 
@@ -17,6 +15,15 @@ public class ScheduleOptaPlanner {
     //public ArrayList<DayAndTimeOptaPlanner> getDayAndTimes() {
     //    return dayAndTimes;
    //}
+
+
+    public ScheduleOptaPlanner() {
+    }
+
+    public ScheduleOptaPlanner(String courseGroup, ArrayList<DayAndTimeOptaPlanner> dayAndTimes) {
+        this.courseGroup = courseGroup;
+        this.dayAndTimes = dayAndTimes;
+    }
 
     public void setDayAndTimes(ArrayList<DayAndTimeOptaPlanner> dayAndTimes) {
         this.dayAndTimes = dayAndTimes;

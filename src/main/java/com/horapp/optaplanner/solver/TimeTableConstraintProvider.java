@@ -1,8 +1,8 @@
-package com.horapp.solver;
+package com.horapp.optaplanner.solver;
 
-import com.horapp.domain.CourseOptaPlanner;
-import com.horapp.domain.DayAndTimeOptaPlanner;
-import com.horapp.domain.ScheduleOptaPlanner;
+import com.horapp.optaplanner.domain.CourseOptaPlanner;
+import com.horapp.optaplanner.domain.DayAndTimeOptaPlanner;
+import com.horapp.optaplanner.domain.ScheduleOptaPlanner;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;

@@ -1,4 +1,4 @@
-package com.horapp.presentation.dto;
+package com.horapp.optaplanner.presentation.dto;
 
 import java.io.Serializable;
 

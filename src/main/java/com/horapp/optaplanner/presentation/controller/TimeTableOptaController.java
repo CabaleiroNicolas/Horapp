@@ -1,9 +1,9 @@
-package com.horapp.presentation.controller.solver;
-import com.horapp.domain.CourseOptaPlanner;
-import com.horapp.domain.TimeTableOptaPlanner;
-import com.horapp.presentation.dto.ScheduleAssignedDTO;
-import com.horapp.presentation.mapper.ScheduleAssignedDTOMapper;
-import com.horapp.solver.TimeTableConstraintProvider;
+package com.horapp.optaplanner.presentation.controller;
+import com.horapp.optaplanner.domain.CourseOptaPlanner;
+import com.horapp.optaplanner.domain.TimeTableOptaPlanner;
+import com.horapp.optaplanner.presentation.dto.ScheduleAssignedDTO;
+import com.horapp.optaplanner.presentation.mapper.ScheduleAssignedDTOMapper;
+import com.horapp.optaplanner.solver.TimeTableConstraintProvider;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @RestController
 @RequestMapping("/timetable")
-public class TimeTableControllerSolver {
+public class TimeTableOptaController {
 
 
     SolverConfig solverConfig = new SolverConfig()
