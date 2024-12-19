@@ -1,18 +1,10 @@
 package com.horapp.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 @Table(name = "feedback")
 public class Feedback {
     @Id
@@ -33,4 +25,46 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "id_course")
     private Course course;
+
+    public Feedback() {
+    }
+
+    public Feedback(long idFeedback, String descriptionName, List<Category> categoryList, Course course) {
+        this.idFeedback = idFeedback;
+        this.descriptionName = descriptionName;
+        this.categoryList = categoryList;
+        this.course = course;
+    }
+
+    public long getIdFeedback() {
+        return idFeedback;
+    }
+
+    public void setIdFeedback(long idFeedback) {
+        this.idFeedback = idFeedback;
+    }
+
+    public String getDescriptionName() {
+        return descriptionName;
+    }
+
+    public void setDescriptionName(String descriptionName) {
+        this.descriptionName = descriptionName;
+    }
+
+    public List<Category> getCategoryList() {
+        return categoryList;
+    }
+
+    public void setCategoryList(List<Category> categoryList) {
+        this.categoryList = categoryList;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 }
