@@ -1,6 +1,5 @@
-package com.horapp.domain;
+package com.horapp.optaplanner.domain;
 
-import lombok.*;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
@@ -10,8 +9,6 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import java.util.List;
 
 @PlanningEntity
-@AllArgsConstructor
-@NoArgsConstructor
 public class CourseOptaPlanner {
 
     @PlanningId
@@ -25,6 +22,15 @@ public class CourseOptaPlanner {
 
     private String courseName;
 
+    public CourseOptaPlanner() {
+    }
+
+    public CourseOptaPlanner(long id, ScheduleOptaPlanner assignedSchedule, List<ScheduleOptaPlanner> availableSchedules, String courseName) {
+        this.id = id;
+        AssignedSchedule = assignedSchedule;
+        this.availableSchedules = availableSchedules;
+        this.courseName = courseName;
+    }
 
     public ScheduleOptaPlanner getAssignedSchedule() {
         return AssignedSchedule;

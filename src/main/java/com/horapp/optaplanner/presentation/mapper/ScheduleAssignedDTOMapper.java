@@ -1,7 +1,7 @@
-package com.horapp.presentation.mapper;
+package com.horapp.optaplanner.presentation.mapper;
 
-import com.horapp.domain.TimeTableOptaPlanner;
-import com.horapp.presentation.dto.ScheduleAssignedDTO;
+import com.horapp.optaplanner.domain.TimeTableOptaPlanner;
+import com.horapp.optaplanner.presentation.dto.ScheduleAssignedDTO;
 
 import java.util.ArrayList;
 import java.util.List;

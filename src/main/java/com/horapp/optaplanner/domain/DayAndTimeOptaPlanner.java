@@ -1,22 +1,22 @@
-package com.horapp.domain;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
+package com.horapp.optaplanner.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 public class DayAndTimeOptaPlanner implements Comparable<DayAndTimeOptaPlanner>{
 
     private DayOfWeek day;
     private LocalTime startTime;
     private LocalTime endTime;
 
+    public DayAndTimeOptaPlanner() {
+    }
+
+    public DayAndTimeOptaPlanner(DayOfWeek day, LocalTime startTime, LocalTime endTime) {
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 
     public DayOfWeek getDay() {
         return day;
