@@ -1,7 +1,7 @@
 package com.horapp.presentation.controller;
 
-import com.horapp.presentation.dto.CourseRequestDTO;
-import com.horapp.presentation.dto.CourseResponseDTO;
+import com.horapp.presentation.dto.request.CourseRequestDTO;
+import com.horapp.presentation.dto.response.CourseResponseDTO;
 import com.horapp.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseRequestDTO> save(@RequestBody CourseRequestDTO courseRequestDTO){
+    public ResponseEntity<CourseResponseDTO> save(@RequestBody CourseRequestDTO courseRequestDTO){
         return new ResponseEntity<>(courseService.save(courseRequestDTO), HttpStatus.CREATED);
     }
 

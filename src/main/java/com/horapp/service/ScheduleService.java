@@ -1,11 +1,10 @@
 package com.horapp.service;
 
 import com.horapp.persistence.entity.Schedule;
-import com.horapp.presentation.dto.ScheduleRequestDTO;
-import com.horapp.presentation.dto.ScheduleResponseDTO;
+import com.horapp.presentation.dto.request.ScheduleRequestDTO;
+import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ScheduleService {
     List<ScheduleResponseDTO> findAll();

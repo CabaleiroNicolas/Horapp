@@ -1,7 +1,7 @@
 package com.horapp.presentation.controller;
 
-import com.horapp.presentation.dto.FeedbackRequestDTO;
-import com.horapp.presentation.dto.FeedbackResponseDTO;
+import com.horapp.presentation.dto.request.FeedbackRequestDTO;
+import com.horapp.presentation.dto.response.FeedbackResponseDTO;
 import com.horapp.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class FeedbackController {
     }
 
     @PostMapping
-    public ResponseEntity<FeedbackRequestDTO> save(@RequestBody FeedbackRequestDTO feedbackRequestDTO){
+    public ResponseEntity<FeedbackResponseDTO> save(@RequestBody FeedbackRequestDTO feedbackRequestDTO){
         return new ResponseEntity<>(feedbackService.save(feedbackRequestDTO), HttpStatus.CREATED);
     }
 

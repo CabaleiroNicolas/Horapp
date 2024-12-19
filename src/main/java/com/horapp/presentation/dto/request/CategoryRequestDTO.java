@@ -1,22 +1,16 @@
-package com.horapp.presentation.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+package com.horapp.presentation.dto.request;
 
 
-@AllArgsConstructor
-@NoArgsConstructor
-public class CategoryDTO {
-    private Long id;
+public class CategoryRequestDTO {
     private String categoryName;
     private String descriptionName;
 
-    public Long getId() {
-        return id;
+    public CategoryRequestDTO() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public CategoryRequestDTO(String categoryName, String descriptionName) {
+        this.categoryName = categoryName;
+        this.descriptionName = descriptionName;
     }
 
     public String getCategoryName() {

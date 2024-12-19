@@ -2,7 +2,8 @@ package com.horapp.service.impl;
 
 import com.horapp.persistence.entity.Category;
 import com.horapp.persistence.repository.CategoryRepository;
-import com.horapp.presentation.dto.CategoryDTO;
+import com.horapp.presentation.dto.request.CategoryRequestDTO;
+import com.horapp.presentation.dto.response.CategoryResponseDTO;
 import com.horapp.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,34 +20,38 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public CategoryDTO saveCategory(CategoryDTO categoryDTO) {
+    public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
         try {
+            Category category = new Category();
             ModelMapper modelMapper = new ModelMapper();
-            Category category = modelMapper.map(categoryDTO, Category.class);
+            category.setCategoryName(categoryRequestDTO.getCategoryName());
+            category.setDescriptionName(categoryRequestDTO.getDescriptionName());
             categoryRepository.save(category);
-            return categoryDTO;
+            return modelMapper.map(category, CategoryResponseDTO.class);
         } catch (Exception e) {
             throw new RuntimeException("Something goes wrong creating the category: " + e.getMessage());
         }
     }
 
     @Override
-    public List<CategoryDTO> findAll() {
+    public List<CategoryResponseDTO> findAll() {
         ModelMapper modelMapper = new ModelMapper();
         return categoryRepository.findByDeletedFalse().stream()
-                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .map(category -> {
+                    return getCategoryResponseDTO(category);
+                })
                 .collect(Collectors.toList());
     }
 
 
+
     @Override
-    public CategoryDTO findById(Long id) {
+    public CategoryResponseDTO findById(Long id) {
         try {
         Optional<Category> category = categoryRepository.findById(id);
         if(category.isPresent()){
-            ModelMapper modelMapper = new ModelMapper();
             Category categoryFind = category.get();
-            return modelMapper.map(categoryFind, CategoryDTO.class);
+            return getCategoryResponseDTO(categoryFind);
         }
         } catch (Exception e) {
             System.err.println("Category with ID: " + e.getMessage() + "don´t exists in database");
@@ -55,11 +60,22 @@ public class CategoryServiceImpl implements CategoryService {
         return null;
     }
 
-
     @Override
-    public Optional<Category> updateById(Category newCategory, Long id) {
-        return Optional.empty();
+    public Category findEntityById(Long id) {
+        try {
+            Optional<Category> category = categoryRepository.findById(id);
+            if(category.isPresent()){
+                ModelMapper modelMapper = new ModelMapper();
+                Category categoryFind = category.get();
+                return categoryFind;
+            }
+        } catch (Exception e) {
+            System.err.println("Category with ID: " + e.getMessage() + "don´t exists in database");
+            throw new RuntimeException(e);
+        }
+        return null;
     }
+
 
     @Override
     public String deleteById(Long id) {
@@ -76,5 +92,13 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RuntimeException(e);
         }
         return "";
+    }
+
+    private static CategoryResponseDTO getCategoryResponseDTO(Category category) {
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
+        categoryResponseDTO.setCategoryName(category.getCategoryName());
+        categoryResponseDTO.setDescriptionName(category.getDescriptionName());
+        categoryResponseDTO.setIdCategory(category.getIdCategory());
+        return categoryResponseDTO;
     }
 }

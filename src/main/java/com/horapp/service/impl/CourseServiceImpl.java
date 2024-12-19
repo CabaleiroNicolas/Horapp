@@ -1,13 +1,13 @@
 package com.horapp.service.impl;
 
-import com.horapp.persistence.entity.Course;
-import com.horapp.persistence.entity.Major;
+import com.horapp.persistence.entity.*;
 import com.horapp.persistence.repository.CourseRepository;
-import com.horapp.presentation.dto.CourseRequestDTO;
-import com.horapp.presentation.dto.CourseResponseDTO;
+import com.horapp.presentation.dto.request.CourseRequestDTO;
+import com.horapp.presentation.dto.response.CourseResponseDTO;
 import com.horapp.service.CourseService;
 import com.horapp.service.MajorService;
-import org.modelmapper.ModelMapper;
+import com.horapp.service.TimeTableService;
+import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,22 +24,29 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private MajorService majorService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TimeTableService timeTableService;
+
     @Override
     public List<CourseResponseDTO> findAll() {
-        ModelMapper modelMapper = new ModelMapper();
         return courseRepository.findByDeletedFalse().stream()
-                .map(course -> modelMapper.map(course, CourseResponseDTO.class))
+                .map(course -> {
+                    return getCourseResponseDTO(course);
+                })
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public CourseResponseDTO findById(Long id) {
         try {
             Optional<Course> optionalCourse = courseRepository.findById(id);
             if(optionalCourse.isPresent()){
-                ModelMapper modelMapper = new ModelMapper();
                 Course course = optionalCourse.get();
-                return modelMapper.map(course, CourseResponseDTO.class);
+                return getCourseResponseDTO(course);
             }
         } catch (Exception e) {
             System.err.println("Course with ID: " + e.getMessage() + "don´t exists in database");
@@ -57,21 +64,33 @@ public class CourseServiceImpl implements CourseService {
                 return course;
             }
         } catch (Exception e) {
-            System.err.println("Course with ID: " + e.getMessage() + "don´t exists in database");
-            throw new RuntimeException(e);
+            throw new RuntimeException("Something goes wrong creating the user: " + e.getMessage());
         }
         return null;
     }
 
     @Override
-    public CourseRequestDTO save(CourseRequestDTO courseRequestDTO) {
+    public CourseResponseDTO save(CourseRequestDTO courseRequestDTO) {
         try {
             Major major = majorService.findEntityById(courseRequestDTO.getMajorId());
             Course course = new Course();
+            CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
+            if(courseRequestDTO.getUserId()!= null){
+                User user = userService.findEntityById(courseRequestDTO.getUserId());
+                course.setUser(user);
+                courseResponseDTO.setUsername(user.getUsername());
+            }
+            if(courseRequestDTO.getTableId() != null){
+                TimeTable timeTable = timeTableService.findEntityById(courseRequestDTO.getTableId());
+                course.setTimeTable(timeTable);
+                courseResponseDTO.setTableId(timeTable.getIdTimeTable());
+            }
             course.setCourseName(courseRequestDTO.getCourseName());
             course.setMajor(major);
             courseRepository.save(course);
-            return courseRequestDTO;
+            courseResponseDTO.setCourseName(course.getCourseName());
+            courseResponseDTO.setMajorName(major.getMajorName());
+            return courseResponseDTO;
         } catch (Exception e) {
             throw new RuntimeException("Something goes wrong creating the course: " + e.getMessage());
         }
@@ -92,5 +111,21 @@ public class CourseServiceImpl implements CourseService {
             throw new RuntimeException(e);
         }
         return "";
+    }
+    private static CourseResponseDTO getCourseResponseDTO(Course course) {
+        CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
+        if(course.getUser()!= null){
+            courseResponseDTO.setUsername(course.getUser().getUsername());
+        }
+        if(course.getTimeTable() != null){
+            courseResponseDTO.setTableId(course.getTimeTable().getIdTimeTable());
+        }
+        courseResponseDTO.setCourseName(course.getCourseName());
+        courseResponseDTO.setMajorName(course.getMajor().getMajorName());
+        List<String> schedules = course.getScheduleList().stream()
+                .map(Schedule::getCourseGroup)
+                .collect(Collectors.toList());
+        courseResponseDTO.setSchedules(schedules);
+        return courseResponseDTO;
     }
 }

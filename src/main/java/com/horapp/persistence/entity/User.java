@@ -11,10 +11,12 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")
     private long idUser;
+    @Column(unique = true)
     private String username;
     private String name;
     private String lastname;
     private String email;
+    private boolean deleted;
 
     @OneToOne(mappedBy = "user")
     private Major major;
@@ -101,5 +103,13 @@ public class User{
 
     public void setTimeTablesList(List<TimeTable> timeTablesList) {
         this.timeTablesList = timeTablesList;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

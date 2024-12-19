@@ -1,12 +1,14 @@
 package com.horapp.service.impl;
 
 import com.horapp.persistence.entity.Category;
+import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Feedback;
 import com.horapp.persistence.repository.CategoryRepository;
 import com.horapp.persistence.repository.FeedbackRepository;
-import com.horapp.presentation.dto.FeedbackRequestDTO;
-import com.horapp.presentation.dto.FeedbackResponseDTO;
+import com.horapp.presentation.dto.request.FeedbackRequestDTO;
+import com.horapp.presentation.dto.response.FeedbackResponseDTO;
 import com.horapp.service.CategoryService;
+import com.horapp.service.CourseService;
 import com.horapp.service.FeedbackService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,13 @@ public class FeedbackServiceImpl implements FeedbackService {
     private CategoryService categoryService;
 
     @Autowired
+    private CourseService courseService;
+
+    @Autowired
     private CategoryRepository categoryRepository;
 
     @Override
-    public FeedbackRequestDTO save(FeedbackRequestDTO feedbackRequestDTO) {
+    public FeedbackResponseDTO save(FeedbackRequestDTO feedbackRequestDTO) {
         try {
             Feedback feedback = new Feedback();
             ModelMapper modelMapper = new ModelMapper();
@@ -38,12 +43,19 @@ public class FeedbackServiceImpl implements FeedbackService {
             feedback.setCategoryList(new ArrayList<>());
             feedbackRequestDTO.getCategoryId().stream()
                     .forEach(categoryId -> {
-                        Category category = categoryRepository.findById(categoryId)
-                                .orElseThrow(() -> new RuntimeException("Category not found"));
+                        Category category = categoryService.findEntityById(categoryId);
+                        if(feedbackRequestDTO.getCourseId() != null){
+                            Course course = courseService.findEntityById(feedbackRequestDTO.getCourseId());
+                            feedback.setCourse(course);
+                        }
                         feedback.getCategoryList().add(category);
                     });
             feedbackRepository.save(feedback);
-            return modelMapper.map(feedback, FeedbackRequestDTO.class);
+            FeedbackResponseDTO feedbackResponseDTO = getFeedbackResponseDTO(feedback, modelMapper);
+            if(feedbackRequestDTO.getCourseId() != null){
+                feedbackResponseDTO.setCourse(feedback.getCourse().getCourseName());
+            }
+            return feedbackResponseDTO;
         }catch (Exception e) {
             throw new RuntimeException("Something goes wrong creating the feedback: " + e.getMessage());
         }
@@ -54,14 +66,19 @@ public class FeedbackServiceImpl implements FeedbackService {
         ModelMapper modelMapper = new ModelMapper();
         return feedbackRepository.findAll().stream()
                 .map(feedback -> {
-                    FeedbackResponseDTO feedbackResponseDTO = modelMapper.map(feedback, FeedbackResponseDTO.class);
-                    List<String> categoryNames = feedback.getCategoryList().stream()
-                            .map(Category::getCategoryName)
-                            .collect(Collectors.toList());
-                    feedbackResponseDTO.setCategories(categoryNames);
+                    FeedbackResponseDTO feedbackResponseDTO = getFeedbackResponseDTO(feedback, modelMapper);
                     return feedbackResponseDTO;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static FeedbackResponseDTO getFeedbackResponseDTO(Feedback feedback, ModelMapper modelMapper) {
+        FeedbackResponseDTO feedbackResponseDTO = modelMapper.map(feedback, FeedbackResponseDTO.class);
+        List<String> categoryNames = feedback.getCategoryList().stream()
+                .map(Category::getCategoryName)
+                .collect(Collectors.toList());
+        feedbackResponseDTO.setCategories(categoryNames);
+        return feedbackResponseDTO;
     }
 
     @Override

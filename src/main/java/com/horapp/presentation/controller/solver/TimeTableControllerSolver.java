@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @RestController
 @RequestMapping("/timetable")
-public class TimeTableController {
+public class TimeTableControllerSolver {
 
 
     SolverConfig solverConfig = new SolverConfig()

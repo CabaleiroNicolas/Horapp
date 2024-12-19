@@ -1,7 +1,8 @@
 package com.horapp.presentation.controller;
 
 
-import com.horapp.presentation.dto.CategoryDTO;
+import com.horapp.presentation.dto.request.CategoryRequestDTO;
+import com.horapp.presentation.dto.response.CategoryResponseDTO;
 import com.horapp.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,18 +19,18 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAll(){
+    public ResponseEntity<List<CategoryResponseDTO>> findAll(){
         return new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> findById(@PathVariable Long id){
+    public ResponseEntity<CategoryResponseDTO> findById(@PathVariable Long id){
         return new ResponseEntity<>(categoryService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> saveCategory(@RequestBody CategoryDTO categoryDTO){
-        return new ResponseEntity<>(categoryService.saveCategory(categoryDTO), HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponseDTO> saveCategory(@RequestBody CategoryRequestDTO categoryRequestDTO){
+        return new ResponseEntity<>(categoryService.saveCategory(categoryRequestDTO), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

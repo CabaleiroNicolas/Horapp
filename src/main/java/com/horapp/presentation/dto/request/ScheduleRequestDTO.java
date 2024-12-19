@@ -1,4 +1,4 @@
-package com.horapp.presentation.dto;
+package com.horapp.presentation.dto.request;
 
 public class ScheduleRequestDTO {
     private String courseGroup;

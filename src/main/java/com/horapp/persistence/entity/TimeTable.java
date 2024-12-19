@@ -20,6 +20,8 @@ public class TimeTable {
     //@ElementCollection(fetch = FetchType.EAGER)
     private List<Course> courseList;
 
+    private boolean deleted;
+
     public TimeTable() {
     }
 
@@ -51,5 +53,13 @@ public class TimeTable {
 
     public void setCourseList(List<Course> courseList) {
         this.courseList = courseList;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

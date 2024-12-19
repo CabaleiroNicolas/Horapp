@@ -1,7 +1,7 @@
 package com.horapp.presentation.controller;
 
-import com.horapp.presentation.dto.DayAndTimeRequestDTO;
-import com.horapp.presentation.dto.DayAndTimeResponseDTO;
+import com.horapp.presentation.dto.request.DayAndTimeRequestDTO;
+import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 import com.horapp.service.DayAndTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

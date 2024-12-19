@@ -1,9 +1,13 @@
 package com.horapp.service.impl;
 
+import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Major;
+import com.horapp.persistence.entity.User;
 import com.horapp.persistence.repository.MajorRepository;
-import com.horapp.presentation.dto.MajorDTO;
+import com.horapp.presentation.dto.request.MajorRequestDTO;
+import com.horapp.presentation.dto.response.MajorResponseDTO;
 import com.horapp.service.MajorService;
+import com.horapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,39 +21,55 @@ public class MajorServiceImpl implements MajorService {
     @Autowired
     private MajorRepository majorRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
-    public MajorDTO saveMajor(MajorDTO majorDTO) {
+    public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
         try {
-            ModelMapper modelMapper = new ModelMapper();
-            Major major = modelMapper.map(majorDTO, Major.class);
+            Major major = new Major();
+            major.setMajorName(majorRequestDTO.getMajorName());
+            major.setDeleted(false);
+            MajorResponseDTO majorResponseDTO = new MajorResponseDTO();
+            if(majorRequestDTO.getUsername() != null){
+                User user = userService.findByUsername(majorRequestDTO.getUsername());
+                major.setUser(user);
+                majorResponseDTO.setUsername(user.getUsername());
+            }
+            majorResponseDTO.setMajorName(major.getMajorName());
+            List<String> courses = extractCourses(major);
+            majorResponseDTO.setCourses(courses);
             majorRepository.save(major);
-            return majorDTO;
+            return majorResponseDTO;
         } catch (Exception e) {
             throw new RuntimeException("Something goes wrong creating the major: " + e.getMessage());
         }
     }
 
+
     @Override
-    public List<MajorDTO> findAll() {
-        ModelMapper modelMapper = new ModelMapper();
+    public List<MajorResponseDTO> findAll() {
         return majorRepository.findByDeletedFalse().stream()
-                .map(major -> modelMapper.map(major, MajorDTO.class))
+                .map(major -> {
+                    MajorResponseDTO majorResponseDTO = getMajorResponseDTO(major);
+                    return  majorResponseDTO;
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public MajorDTO findById(Long id) {
+    public MajorResponseDTO findById(Long id) {
         try{
             Optional<Major> optionalMajor = majorRepository.findById(id);
             if(optionalMajor.isPresent()){
-                ModelMapper modelMapper = new ModelMapper();
                 Major major = optionalMajor.get();
-                return modelMapper.map(major, MajorDTO.class);
+                MajorResponseDTO majorResponseDTO = getMajorResponseDTO(major);
+                return  majorResponseDTO;
             }
         } catch (Exception e) {
             System.err.println("Major with ID: " + e.getMessage() + "don´t exists in database");
         }
-        return new MajorDTO();
+        return new MajorResponseDTO();
     }
 
     @Override
@@ -67,11 +87,6 @@ public class MajorServiceImpl implements MajorService {
     }
 
     @Override
-    public Optional<MajorDTO> updateById(MajorDTO majorDTO, long id) {
-        return Optional.empty();
-    }
-
-    @Override
     public String deleteById(Long id) {
         try{
             Optional<Major> optionalMajor = majorRepository.findById(id);
@@ -86,5 +101,21 @@ public class MajorServiceImpl implements MajorService {
             System.err.println("Major with ID: " + e.getMessage() + "don´t exists in database");
         }
         return "";
+    }
+
+    private static MajorResponseDTO getMajorResponseDTO(Major major) {
+        MajorResponseDTO majorResponseDTO = new MajorResponseDTO();
+        majorResponseDTO.setIdMajor(major.getIdMajor());
+        majorResponseDTO.setMajorName(major.getMajorName());
+        majorResponseDTO.setUsername((major.getUser()!=null) ? major.getUser().getUsername() : null);
+        majorResponseDTO.setCourses(extractCourses(major));
+        return majorResponseDTO;
+    }
+
+    private static List<String> extractCourses(Major major) {
+        List<String> courses = major.getCourseList().stream()
+                .map(Course::getCourseName)
+                        .collect(Collectors.toList());
+        return courses;
     }
 }

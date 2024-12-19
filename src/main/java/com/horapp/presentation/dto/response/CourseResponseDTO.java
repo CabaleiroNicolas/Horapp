@@ -1,10 +1,12 @@
-package com.horapp.presentation.dto;
+package com.horapp.presentation.dto.response;
 
 import java.util.List;
 
 public class CourseResponseDTO {
     private String courseName;
     private String majorName;
+    private String username;
+    private Long tableId;
     private List<String> schedules;
 
     public CourseResponseDTO() {
@@ -38,6 +40,22 @@ public class CourseResponseDTO {
 
     public void setSchedules(List<String> schedules) {
         this.schedules = schedules;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Long getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(Long tableId) {
+        this.tableId = tableId;
     }
 }
 

@@ -1,9 +1,10 @@
-package com.horapp.presentation.dto;
+package com.horapp.presentation.dto.request;
 
 public class CourseRequestDTO {
     private String courseName;
     private Long majorId;
-
+    private Long userId;
+    private Long tableId;
     public CourseRequestDTO() {
     }
 
@@ -26,5 +27,21 @@ public class CourseRequestDTO {
 
     public void setMajorId(Long majorId) {
         this.majorId = majorId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(Long tableId) {
+        this.tableId = tableId;
     }
 }

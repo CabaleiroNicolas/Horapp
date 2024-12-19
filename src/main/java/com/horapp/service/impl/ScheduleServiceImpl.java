@@ -1,11 +1,10 @@
 package com.horapp.service.impl;
 
 import com.horapp.persistence.entity.Course;
-import com.horapp.persistence.entity.DayAndTime;
 import com.horapp.persistence.entity.Schedule;
 import com.horapp.persistence.repository.ScheduleRepository;
-import com.horapp.presentation.dto.ScheduleRequestDTO;
-import com.horapp.presentation.dto.ScheduleResponseDTO;
+import com.horapp.presentation.dto.request.ScheduleRequestDTO;
+import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 import com.horapp.service.CourseService;
 import com.horapp.service.ScheduleService;
 import org.modelmapper.ModelMapper;
@@ -37,14 +36,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .collect(Collectors.toList());
     }
 
-    private static ScheduleResponseDTO getScheduleResponseDTO(Schedule schedule, ModelMapper modelMapper) {
-        ScheduleResponseDTO scheduleResponseDTO = modelMapper.map(schedule, ScheduleResponseDTO.class);
-        List<String> days = schedule.getDaysAndTimes().stream()
-                .map(day -> day.getDay().toString())
-                .collect(Collectors.toList());
-        scheduleResponseDTO.setDays(days);
-        return scheduleResponseDTO;
-    }
 
     @Override
     public ScheduleResponseDTO findById(Long id) {
@@ -92,4 +83,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         return null;
     }
 
+    private static ScheduleResponseDTO getScheduleResponseDTO(Schedule schedule, ModelMapper modelMapper) {
+        ScheduleResponseDTO scheduleResponseDTO = modelMapper.map(schedule, ScheduleResponseDTO.class);
+        List<String> days = schedule.getDaysAndTimes().stream()
+                .map(day -> day.getDay().toString())
+                .collect(Collectors.toList());
+        scheduleResponseDTO.setDays(days);
+        return scheduleResponseDTO;
+    }
 }

@@ -1,7 +1,7 @@
 package com.horapp.presentation.controller;
 
-import com.horapp.presentation.dto.ScheduleRequestDTO;
-import com.horapp.presentation.dto.ScheduleResponseDTO;
+import com.horapp.presentation.dto.request.ScheduleRequestDTO;
+import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 import com.horapp.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
