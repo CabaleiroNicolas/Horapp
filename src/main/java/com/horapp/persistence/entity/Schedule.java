@@ -14,7 +14,7 @@ public class Schedule {
     @Column(name = "course_group")
     private String courseGroup;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "schedule")
     //@ElementCollection(fetch = FetchType.EAGER)
     private List<DayAndTime> daysAndTimes;
 
@@ -62,5 +62,14 @@ public class Schedule {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "idSchedule=" + idSchedule +
+                ", courseGroup='" + courseGroup + '\'' +
+                ", daysAndTimes=" + daysAndTimes +
+                '}';
     }
 }

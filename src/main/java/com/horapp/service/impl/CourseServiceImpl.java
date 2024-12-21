@@ -39,6 +39,11 @@ public class CourseServiceImpl implements CourseService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Course> findAllOpta(List<Long> idList) {
+        return courseRepository.findByIdCourseInAndDeletedFalse(idList);
+    }
+
 
     @Override
     public CourseResponseDTO findById(Long id) {

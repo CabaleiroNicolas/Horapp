@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CourseService {
     List<CourseResponseDTO> findAll();
+    List<Course> findAllOpta(List<Long> idList);
     CourseResponseDTO findById(Long id);
     Course findEntityById(Long id);
     CourseResponseDTO save(CourseRequestDTO courseRequestDTO);
