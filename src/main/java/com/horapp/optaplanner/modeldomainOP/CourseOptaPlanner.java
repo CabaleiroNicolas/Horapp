@@ -1,7 +1,6 @@
-package com.horapp.optaplanner.domain;
+package com.horapp.optaplanner.modeldomainOP;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
-
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;

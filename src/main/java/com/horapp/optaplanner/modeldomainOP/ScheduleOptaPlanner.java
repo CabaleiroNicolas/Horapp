@@ -1,4 +1,4 @@
-package com.horapp.optaplanner.domain;
+package com.horapp.optaplanner.modeldomainOP;
 
 
 import java.util.ArrayList;
