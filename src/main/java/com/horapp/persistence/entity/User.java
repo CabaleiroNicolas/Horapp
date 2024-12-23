@@ -18,7 +18,7 @@ public class User{
     private String email;
     private boolean deleted;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "user")
     private Major major;
 
     @OneToMany(mappedBy = "user")

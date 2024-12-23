@@ -50,4 +50,11 @@ public class TimeTableOptaPlanner {
         }
     }
 
+    @Override
+    public String toString() {
+        return "TimeTableOptaPlanner{" +
+                "courses=" + courses +
+                ", score=" + score +
+                '}';
+    }
 }

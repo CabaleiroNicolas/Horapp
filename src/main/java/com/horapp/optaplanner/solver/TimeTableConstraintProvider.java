@@ -15,7 +15,6 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
-
        Constraint[] constraint = new Constraint[]{
                noOverlapConstraint(constraintFactory),
                minimizeDistanceBetweenCourses(constraintFactory),
