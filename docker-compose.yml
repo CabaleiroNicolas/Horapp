@@ -1,5 +1,5 @@
 services:
-  backend:
+  horapp_backend:
     build: .
     # image: "b"
     networks:
@@ -7,17 +7,17 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DATABASE_URL: jdbc:postgresql://postgres:5432/byron_db
+      DATABASE_URL: jdbc:postgresql://postgres:5432/horapp_db
       DATABASE_USERNAME: test
       DATABASE_PASSWORD: test
     depends_on:
-      - postgres
+      - postgres_db
 
-  postgres:
+  postgres_db:
     image: postgres:16.2-alpine
     networks:
       - horapp-network
-    container_name: db-postgres
+    container_name: db-postgres-horapp
     restart: always
     environment:
       POSTGRES_USER: test
@@ -39,7 +39,7 @@ services:
     ports:
       - "8081:80"
     depends_on:
-      - postgres
+      - postgres_db
 
 networks:
   horapp-network:

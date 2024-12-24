@@ -5,11 +5,11 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "time_table")
+@Table(name = "time_tables")
 public class TimeTable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_time_table")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "time_table_seq_gen")
+    @SequenceGenerator(name = "time_table_seq_gen", sequenceName = "time_tables_id_seq", allocationSize = 1)
     private long idTimeTable;
 
     @ManyToOne

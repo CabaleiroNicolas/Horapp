@@ -5,19 +5,20 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "schedule")
+@Table(name = "schedules")
 public class Schedule {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_schedule")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_seq_gen")
+    @SequenceGenerator(name = "schedule_seq_gen", sequenceName = "schedules_id_seq", allocationSize = 1)
     private long idSchedule;
-    @Column(name = "course_group")
+
     private String courseGroup;
 
-    @OneToMany(fetch = FetchType.EAGER,mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "schedule")
     //@ElementCollection(fetch = FetchType.EAGER)
     private List<DayAndTime> daysAndTimes;
 
+    //posiblemente necesite @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_course", nullable = false)
     private Course course;

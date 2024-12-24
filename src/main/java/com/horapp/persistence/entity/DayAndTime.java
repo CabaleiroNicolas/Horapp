@@ -6,18 +6,21 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "day_and_time")
+@Table(name = "days_and_times")
 public class DayAndTime {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_day_and_time")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "day_and_time_seq_gen")
+    @SequenceGenerator(name = "day_and_time_seq_gen", sequenceName = "days_and_times_id_seq", allocationSize = 1)
     private long idDayAndTime;
     @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
     private DayOfWeek day;
-    @Column(name = "start_time", columnDefinition = "TIME")
+
     private LocalTime startTime;
-    @Column(name = "end_time", columnDefinition = "TIME")
+
     private LocalTime endTime;
+
+    //Posiblemente necesite @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_schedule", nullable = false)
     private Schedule schedule;

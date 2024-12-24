@@ -6,6 +6,11 @@ import com.horapp.optaplanner.solver.SolverService;
 import com.horapp.presentation.dto.request.TimeTableRequestDTO;
 import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 import com.horapp.service.TimeTableService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +27,24 @@ public class TimeTableController {
 
     @Autowired
     private SolverService solverService;
+
+
+    @Operation(
+            summary = "Actualizar la propiedad deliveryPrice de un restaurante",
+            description = "Recibe un valor de delivery y actualiza la propiedad deliveryPrice del restaurante",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Request body con la lista de cursos a ordenar con sus respectivas comisiones",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
+                    )
+            ))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
 
     @PostMapping("/solve")
     public ResponseEntity<TimeTableOptaResponseDTO> solver(@RequestBody TimeTableOptaRequestDTO timeTableOptaRequestDTO) {
