@@ -1,4 +1,4 @@
-package com.horapp.dto.response;
+package com.horapp.presentation.dto.response;
 
 import java.io.Serializable;
 

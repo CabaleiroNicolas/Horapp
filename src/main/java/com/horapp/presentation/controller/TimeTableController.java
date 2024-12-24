@@ -1,5 +1,8 @@
 package com.horapp.presentation.controller;
 
+import com.horapp.presentation.dto.request.TimeTableOptaRequestDTO;
+import com.horapp.presentation.dto.response.TimeTableOptaResponseDTO;
+import com.horapp.optaplanner.solver.SolverService;
 import com.horapp.presentation.dto.request.TimeTableRequestDTO;
 import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 import com.horapp.service.TimeTableService;
@@ -16,6 +19,17 @@ public class TimeTableController {
 
     @Autowired
     private TimeTableService timeTableService;
+
+    @Autowired
+    private SolverService solverService;
+
+    @PostMapping("/solve")
+    public ResponseEntity<TimeTableOptaResponseDTO> solver(@RequestBody TimeTableOptaRequestDTO timeTableOptaRequestDTO) {
+
+        TimeTableOptaResponseDTO solvedTimeTable = solverService.solveProblem(timeTableOptaRequestDTO);
+
+        return ResponseEntity.ok(solvedTimeTable);
+    }
 
     @GetMapping
     public ResponseEntity<List<TimeTableResponseDTO>> findAll(){

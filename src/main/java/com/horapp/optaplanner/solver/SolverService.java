@@ -1,7 +1,7 @@
 package com.horapp.optaplanner.solver;
 
-import com.horapp.dto.request.TimeTableOptaRequestDTO;
-import com.horapp.dto.response.TimeTableOptaResponseDTO;
+import com.horapp.presentation.dto.request.TimeTableOptaRequestDTO;
+import com.horapp.presentation.dto.response.TimeTableOptaResponseDTO;
 
 
 public interface SolverService {

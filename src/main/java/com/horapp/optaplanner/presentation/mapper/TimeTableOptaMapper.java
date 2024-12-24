@@ -1,6 +1,6 @@
 package com.horapp.optaplanner.presentation.mapper;
 
-import com.horapp.dto.request.TimeTableOptaRequestDTO;
+import com.horapp.presentation.dto.request.TimeTableOptaRequestDTO;
 import com.horapp.optaplanner.modeldomainOP.CourseOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.DayAndTimeOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.ScheduleOptaPlanner;

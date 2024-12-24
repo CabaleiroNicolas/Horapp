@@ -1,4 +1,4 @@
-package com.horapp.dto.request;
+package com.horapp.presentation.dto.request;
 
 import java.util.List;
 

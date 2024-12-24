@@ -1,4 +1,6 @@
-package com.horapp.dto.response;
+package com.horapp.presentation.dto.response;
+
+import com.horapp.presentation.dto.response.ScheduleAssignedDTO;
 
 import java.util.List;
 

@@ -1,5 +1,5 @@
 package com.horapp.optaplanner.presentation.mapper;
-import com.horapp.dto.response.ScheduleAssignedDTO;
+import com.horapp.presentation.dto.response.ScheduleAssignedDTO;
 import com.horapp.optaplanner.modeldomainOP.TimeTableOptaPlanner;
 
 import java.util.ArrayList;

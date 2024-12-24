@@ -1,0 +1,46 @@
+services:
+  backend:
+    build: .
+    # image: "b"
+    networks:
+      - horapp-network
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/byron_db
+      DATABASE_USERNAME: test
+      DATABASE_PASSWORD: test
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16.2-alpine
+    networks:
+      - horapp-network
+    container_name: db-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: horapp_db
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:8.7
+    networks:
+      - horapp-network
+    restart: always
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres
+
+networks:
+  horapp-network:
+    driver: bridge
