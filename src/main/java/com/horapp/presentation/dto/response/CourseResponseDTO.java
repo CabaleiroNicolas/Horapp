@@ -3,6 +3,7 @@ package com.horapp.presentation.dto.response;
 import java.util.List;
 
 public class CourseResponseDTO {
+    private Long idCourse;
     private String courseName;
     private String majorName;
     private String username;
@@ -56,6 +57,14 @@ public class CourseResponseDTO {
 
     public void setTableId(Long tableId) {
         this.tableId = tableId;
+    }
+
+    public Long getIdCourse() {
+        return idCourse;
+    }
+
+    public void setIdCourse(Long idCourse) {
+        this.idCourse = idCourse;
     }
 }
 

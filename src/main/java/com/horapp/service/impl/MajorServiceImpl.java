@@ -1,5 +1,7 @@
 package com.horapp.service.impl;
 
+import com.horapp.exception.major.MajorCreationException;
+import com.horapp.exception.major.MajorNotFoundException;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Major;
 import com.horapp.persistence.entity.User;
@@ -10,6 +12,7 @@ import com.horapp.service.MajorService;
 import com.horapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,8 +44,12 @@ public class MajorServiceImpl implements MajorService {
             majorResponseDTO.setCourses(courses);
             majorRepository.save(major);
             return majorResponseDTO;
+        } catch (MajorNotFoundException e) {
+            throw new MajorCreationException(e.getMessage(), e);
+        } catch (DataIntegrityViolationException e) {
+            throw new MajorCreationException("Data integrity violation while creating the major: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("Something goes wrong creating the major: " + e.getMessage());
+            throw new MajorCreationException("An unexpected error occurred while creating the major.", e);
         }
     }
 
@@ -59,48 +66,36 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public MajorResponseDTO findById(Long id) {
-        try{
-            Optional<Major> optionalMajor = majorRepository.findById(id);
-            if(optionalMajor.isPresent()){
+        Optional<Major> optionalMajor = majorRepository.findById(id);
+            if(!optionalMajor.isPresent()){
+                throw new MajorNotFoundException(id);
+            }
                 Major major = optionalMajor.get();
                 MajorResponseDTO majorResponseDTO = getMajorResponseDTO(major);
                 return  majorResponseDTO;
-            }
-        } catch (Exception e) {
-            System.err.println("Major with ID: " + e.getMessage() + "don´t exists in database");
         }
-        return new MajorResponseDTO();
-    }
+
 
     @Override
     public Major findEntityById(Long id) {
-        try{
-            Optional<Major> optionalMajor = majorRepository.findById(id);
-            if(optionalMajor.isPresent()){
-                Major major = optionalMajor.get();
-                return major;
-            }
-        } catch (Exception e) {
-            System.err.println("Major with ID: " + e.getMessage() + "don´t exists in database");
+        Optional<Major> optionalMajor = majorRepository.findById(id);
+        if(!optionalMajor.isPresent()){
+            throw new MajorNotFoundException(id);
         }
-        return null;
+        return  optionalMajor.get();
     }
 
     @Override
     public String deleteById(Long id) {
-        try{
-            Optional<Major> optionalMajor = majorRepository.findById(id);
-            if(optionalMajor.isPresent()){
-                ModelMapper modelMapper = new ModelMapper();
-                Major major = optionalMajor.get();
-                major.setDeleted(true);
-                majorRepository.save(major);
-                return "The Major with ID " + major.getIdMajor() + " was deleted successfully" ;
-            }
-        } catch (Exception e) {
-            System.err.println("Major with ID: " + e.getMessage() + "don´t exists in database");
+        Optional<Major> optionalMajor = majorRepository.findById(id);
+        if(!optionalMajor.isPresent()){
+            throw new MajorNotFoundException(id);
         }
-        return "";
+            ModelMapper modelMapper = new ModelMapper();
+            Major major = optionalMajor.get();
+            major.setDeleted(true);
+            majorRepository.save(major);
+            return "The Major with ID " + major.getIdMajor() + " was deleted successfully" ;
     }
 
     private static MajorResponseDTO getMajorResponseDTO(Major major) {

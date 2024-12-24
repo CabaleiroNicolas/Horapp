@@ -1,5 +1,8 @@
 package com.horapp.service.impl;
 
+import com.horapp.exception.Schedule.ScheduleNotFoundException;
+import com.horapp.exception.dayAndTime.DayAndTimeCreationException;
+import com.horapp.exception.dayAndTime.DayAndTimeNotFoundException;
 import com.horapp.persistence.entity.DayAndTime;
 import com.horapp.persistence.entity.Schedule;
 import com.horapp.persistence.repository.DayAndTimeRepository;
@@ -8,6 +11,7 @@ import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 import com.horapp.service.DayAndTimeService;
 import com.horapp.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -35,20 +39,19 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
     @Override
     public DayAndTimeResponseDTO findById(Long id) {
-        try {
-            Optional<DayAndTime> optionalDayAndTime = dayAndTimeRepository.findById(id);
-            if(optionalDayAndTime.isPresent()){
-                DayAndTime dayAndTime = optionalDayAndTime.get();
-                return convertToResponseDTO(dayAndTime);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Something goes wrong creating the dayAndTime: " + e.getMessage());
+        Optional<DayAndTime> optionalDayAndTime = dayAndTimeRepository.findById(id);
+        if(!optionalDayAndTime.isPresent()){
+            throw new DayAndTimeNotFoundException(id);
         }
-        return new DayAndTimeResponseDTO();
+        DayAndTime dayAndTime = optionalDayAndTime.get();
+        return convertToResponseDTO(dayAndTime);
     }
 
     @Override
     public DayAndTimeResponseDTO save(DayAndTimeRequestDTO dayAndTimeRequestDTO) {
+        if(dayAndTimeRequestDTO.getStartTime().isEmpty() || dayAndTimeRequestDTO.getEndTime().isEmpty() || dayAndTimeRequestDTO.getDay().isEmpty()){
+            throw new NullPointerException("The fields StartTime, EndTime, Day must not be empty");
+        }
         try {
             Schedule schedule = scheduleService.findEntityById(dayAndTimeRequestDTO.getIdSchedule());
             DayAndTime dayAndTime = new DayAndTime();
@@ -58,8 +61,12 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
             dayAndTime.setSchedule(schedule);
             dayAndTimeRepository.save(dayAndTime);
             return convertToResponseDTO(dayAndTime);
-        } catch (Exception e) {
-            throw new RuntimeException("Something goes wrong creating the dayAndTime: " + e.getMessage());
+        } catch (ScheduleNotFoundException | DayAndTimeNotFoundException e){
+            throw new DayAndTimeCreationException(e.getMessage(), e);
+        } catch (DataIntegrityViolationException e){
+            throw new DayAndTimeCreationException("Data integrity violation while creating the dayAndTime: " + e.getMessage(), e);
+        } catch (Exception e){
+            throw new DayAndTimeCreationException("An unexpected error occurred while creating the dayAndTime.", e);
         }
     }
 

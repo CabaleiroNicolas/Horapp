@@ -1,5 +1,7 @@
 package com.horapp.service.impl;
 
+import com.horapp.exception.category.CategoryCreationException;
+import com.horapp.exception.category.CategoryNotFoundException;
 import com.horapp.persistence.entity.Category;
 import com.horapp.persistence.repository.CategoryRepository;
 import com.horapp.presentation.dto.request.CategoryRequestDTO;
@@ -7,6 +9,7 @@ import com.horapp.presentation.dto.response.CategoryResponseDTO;
 import com.horapp.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
         try {
@@ -28,8 +32,12 @@ public class CategoryServiceImpl implements CategoryService {
             category.setDescriptionName(categoryRequestDTO.getDescriptionName());
             categoryRepository.save(category);
             return modelMapper.map(category, CategoryResponseDTO.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Something goes wrong creating the category: " + e.getMessage());
+        } catch (CategoryNotFoundException e) {
+            throw new CategoryCreationException(e.getMessage(), e);
+        } catch (DataIntegrityViolationException e){
+            throw new CategoryCreationException("Data integrity violation while creating the category: " + e.getMessage(), e);
+        } catch (Exception e){
+            throw new CategoryCreationException("An unexpected error occurred while creating the category.", e);
         }
     }
 
@@ -44,54 +52,38 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
 
-
     @Override
     public CategoryResponseDTO findById(Long id) {
-        try {
         Optional<Category> category = categoryRepository.findById(id);
-        if(category.isPresent()){
-            Category categoryFind = category.get();
-            return getCategoryResponseDTO(categoryFind);
+        if(!category.isPresent()){
+            throw new CategoryNotFoundException(id);
         }
-        } catch (Exception e) {
-            System.err.println("Category with ID: " + e.getMessage() + "don´t exists in database");
-            throw new RuntimeException(e);
-        }
-        return null;
+        Category categoryFind = category.get();
+        return getCategoryResponseDTO(categoryFind);
     }
 
     @Override
     public Category findEntityById(Long id) {
-        try {
-            Optional<Category> category = categoryRepository.findById(id);
-            if(category.isPresent()){
-                ModelMapper modelMapper = new ModelMapper();
-                Category categoryFind = category.get();
-                return categoryFind;
-            }
-        } catch (Exception e) {
-            System.err.println("Category with ID: " + e.getMessage() + "don´t exists in database");
-            throw new RuntimeException(e);
+        Optional<Category> category = categoryRepository.findById(id);
+        if(!category.isPresent()){
+            throw new CategoryNotFoundException(id);
         }
-        return null;
+            ModelMapper modelMapper = new ModelMapper();
+            Category categoryFind = category.get();
+            return categoryFind;
     }
 
 
     @Override
     public String deleteById(Long id) {
-        try {
-            Optional<Category> category = categoryRepository.findById(id);
-            if(category.isPresent()){
-                Category categoryToDelete = category.get();
-                categoryToDelete.setDeleted(true);
-                categoryRepository.save(categoryToDelete);
-                return "The Category with ID " + categoryToDelete.getIdCategory()+ " was deleted successfully" ;
-            }
-        } catch (Exception e) {
-            System.err.println("Category with ID: " + e.getMessage() + "don´t exists in database");
-            throw new RuntimeException(e);
+        Optional<Category> category = categoryRepository.findById(id);
+        if(!category.isPresent()){
+            throw new CategoryNotFoundException(id);
         }
-        return "";
+            Category categoryToDelete = category.get();
+            categoryToDelete.setDeleted(true);
+            categoryRepository.save(categoryToDelete);
+            return "The Category with ID " + categoryToDelete.getIdCategory()+ " was deleted successfully" ;
     }
 
     private static CategoryResponseDTO getCategoryResponseDTO(Category category) {
