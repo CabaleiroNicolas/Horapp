@@ -25,6 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
+        if(categoryRequestDTO.getCategoryName().isEmpty() || categoryRequestDTO.getDescriptionName().isEmpty() ){
+            throw new NullPointerException("The fields categoryName and descriptionName must no be empty");
+        }
         try {
             Category category = new Category();
             ModelMapper modelMapper = new ModelMapper();

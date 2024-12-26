@@ -1,6 +1,6 @@
 package com.horapp.service.impl;
 
-import com.horapp.exception.Schedule.ScheduleNotFoundException;
+import com.horapp.exception.schedule.ScheduleNotFoundException;
 import com.horapp.exception.dayAndTime.DayAndTimeCreationException;
 import com.horapp.exception.dayAndTime.DayAndTimeNotFoundException;
 import com.horapp.persistence.entity.DayAndTime;

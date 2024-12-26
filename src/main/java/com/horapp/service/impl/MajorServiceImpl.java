@@ -2,6 +2,7 @@ package com.horapp.service.impl;
 
 import com.horapp.exception.major.MajorCreationException;
 import com.horapp.exception.major.MajorNotFoundException;
+import com.horapp.exception.user.UserNotFoundException;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Major;
 import com.horapp.persistence.entity.User;
@@ -29,6 +30,9 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
+        if(majorRequestDTO.getMajorName().isEmpty()){
+            throw new NullPointerException("The field majorName must not be empty");
+        }
         try {
             Major major = new Major();
             major.setMajorName(majorRequestDTO.getMajorName());
@@ -44,7 +48,7 @@ public class MajorServiceImpl implements MajorService {
             majorResponseDTO.setCourses(courses);
             majorRepository.save(major);
             return majorResponseDTO;
-        } catch (MajorNotFoundException e) {
+        } catch (MajorNotFoundException | UserNotFoundException e) {
             throw new MajorCreationException(e.getMessage(), e);
         } catch (DataIntegrityViolationException e) {
             throw new MajorCreationException("Data integrity violation while creating the major: " + e.getMessage(), e);

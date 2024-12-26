@@ -1,4 +1,4 @@
-package com.horapp.exception.Schedule;
+package com.horapp.exception.schedule;
 
 public class ScheduleNotFoundException extends RuntimeException{
     public ScheduleNotFoundException(Long id) {

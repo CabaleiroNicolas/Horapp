@@ -1,7 +1,7 @@
 package com.horapp.service.impl;
 
-import com.horapp.exception.Schedule.ScheduleCreationException;
-import com.horapp.exception.Schedule.ScheduleNotFoundException;
+import com.horapp.exception.schedule.ScheduleCreationException;
+import com.horapp.exception.schedule.ScheduleNotFoundException;
 import com.horapp.exception.course.CourseNotFoundException;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Schedule;

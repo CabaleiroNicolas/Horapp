@@ -1,7 +1,7 @@
 package com.horapp.exception;
 
-import com.horapp.exception.Schedule.ScheduleCreationException;
-import com.horapp.exception.Schedule.ScheduleNotFoundException;
+import com.horapp.exception.schedule.ScheduleCreationException;
+import com.horapp.exception.schedule.ScheduleNotFoundException;
 import com.horapp.exception.category.CategoryCreationException;
 import com.horapp.exception.category.CategoryNotFoundException;
 import com.horapp.exception.course.CourseCreationException;
@@ -12,6 +12,10 @@ import com.horapp.exception.feedback.FeedbackCreationException;
 import com.horapp.exception.feedback.FeedbackNotFoundException;
 import com.horapp.exception.major.MajorCreationException;
 import com.horapp.exception.major.MajorNotFoundException;
+import com.horapp.exception.time_table.TimeTableCreationException;
+import com.horapp.exception.time_table.TimeTableNotFoundException;
+import com.horapp.exception.user.UserCreationException;
+import com.horapp.exception.user.UserNotFoundException;
 import com.horapp.presentation.dto.response.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -80,6 +84,26 @@ public class GlobalHandlerException {
 
     @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<ExceptionResponse> courseNotFoundException(CourseNotFoundException exception, HttpServletRequest request){
+        return getExceptionResponseResponseEntity(exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(TimeTableNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> timeTableNotFoundException(TimeTableNotFoundException exception, HttpServletRequest request){
+        return getExceptionResponseResponseEntity(exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(TimeTableCreationException.class)
+    public ResponseEntity<ExceptionResponse> timeTableCreationException(TimeTableCreationException exception, HttpServletRequest request){
+        return getExceptionResponseResponseEntity(exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> userNotFoundException(UserNotFoundException exception, HttpServletRequest request){
+        return getExceptionResponseResponseEntity(exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(UserCreationException.class)
+    public ResponseEntity<ExceptionResponse> userCreationException(UserCreationException exception, HttpServletRequest request){
         return getExceptionResponseResponseEntity(exception.getMessage(), request);
     }
 

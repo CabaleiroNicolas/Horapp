@@ -38,12 +38,14 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackResponseDTO save(FeedbackRequestDTO feedbackRequestDTO) {
+        if(feedbackRequestDTO.getDescriptionName().isEmpty()){
+            throw new NullPointerException("The field description name must not be empty");
+        }
         try {
             Feedback feedback = new Feedback();
             ModelMapper modelMapper = new ModelMapper();
             feedback.setDescriptionName(feedbackRequestDTO.getDescriptionName());
             feedback.setCategoryList(new ArrayList<>());
-
             feedbackRequestDTO.getCategoryId().forEach(categoryId -> {
                 Category category = categoryService.findEntityById(categoryId); // Lanza CategoryNotFoundException
                 if (feedbackRequestDTO.getCourseId() != null) {
@@ -63,9 +65,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
             return feedbackResponseDTO;
 
-        } catch (CategoryNotFoundException e) {
-            throw new FeedbackCreationException(e.getMessage(), e);
-        } catch (FeedbackNotFoundException e) {
+        } catch (CategoryNotFoundException | FeedbackNotFoundException e) {
             throw new FeedbackCreationException(e.getMessage(), e);
         } catch (DataIntegrityViolationException e) {
             throw new FeedbackCreationException("Data integrity violation while creating the feedback: " + e.getMessage(), e);
