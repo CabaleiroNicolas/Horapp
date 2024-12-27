@@ -5,17 +5,18 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "major")
+@Table(name = "majors")
 public class Major {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_major")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "major_seq_gen")
+    @SequenceGenerator(name = "major_seq_gen", sequenceName = "majors_id_seq", allocationSize = 1)
     private long idMajor;
-    @Column(name = "major_name")
+
     private String majorName;
 
     private boolean deleted;
 
+    //Revisar relacion onetoone?
     @OneToOne
     @JoinColumn(name = "id_user")
     private User user;

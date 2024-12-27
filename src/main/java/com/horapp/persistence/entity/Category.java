@@ -8,17 +8,15 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "category")
+@Table(name = "categories_fb")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_category")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq_gen")
+    @SequenceGenerator(name = "category_seq_gen", sequenceName = "categories_fb_id_seq", allocationSize = 1)
     private long idCategory;
 
-    @Column(name = "category_name")
     private String categoryName;
 
-    @Column(name = "description_name")
     private String descriptionName;
 
     private boolean deleted;

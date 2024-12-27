@@ -5,18 +5,18 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "feedback")
+@Table(name = "feedbacks")
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_feedback")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feedback_seq_gen")
+    @SequenceGenerator(name = "feedback_seq_gen", sequenceName = "feedbacks_id_seq", allocationSize = 1)
     private long idFeedback;
-    @Column(name = "description_name")
+
     private String descriptionName;
 
     @ManyToMany
     @JoinTable(
-            name = "feedback_category",
+            name = "feedback_category_relationship",
             joinColumns = @JoinColumn(name = "id_feedback"),
             inverseJoinColumns = @JoinColumn(name = "id_category")
     )

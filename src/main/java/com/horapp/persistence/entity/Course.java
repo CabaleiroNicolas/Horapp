@@ -5,13 +5,13 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "course")
+@Table(name = "courses")
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_course")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "course_seq_gen")
+    @SequenceGenerator(name = "course_seq_gen", sequenceName = "courses_id_seq", allocationSize = 1)
     private long idCourse;
-    @Column(name = "course_name")
+
     private String courseName;
 
     private boolean deleted;
