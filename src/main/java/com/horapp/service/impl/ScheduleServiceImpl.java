@@ -1,5 +1,8 @@
 package com.horapp.service.impl;
 
+import com.horapp.exception.schedule.ScheduleCreationException;
+import com.horapp.exception.schedule.ScheduleNotFoundException;
+import com.horapp.exception.course.CourseNotFoundException;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Schedule;
 import com.horapp.persistence.repository.ScheduleRepository;
@@ -9,6 +12,7 @@ import com.horapp.service.CourseService;
 import com.horapp.service.ScheduleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,20 +43,24 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResponseDTO findById(Long id) {
-        try{
-            Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
-            if(optionalSchedule.isPresent()){
-                ModelMapper modelMapper = new ModelMapper();
-                Schedule schedule = optionalSchedule.get();
-                ScheduleResponseDTO scheduleResponseDTO = getScheduleResponseDTO(schedule, modelMapper);
-                return scheduleResponseDTO;
-            }
-        } catch (Exception e) {
-            System.err.println("Schedule with ID: " + e.getMessage() + "don´t exists in database");
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
+        if(!optionalSchedule.isPresent()){
+            throw new ScheduleNotFoundException(id);
         }
-        return new ScheduleResponseDTO();
+            ModelMapper modelMapper = new ModelMapper();
+            Schedule schedule = optionalSchedule.get();
+            ScheduleResponseDTO scheduleResponseDTO = getScheduleResponseDTO(schedule, modelMapper);
+            return scheduleResponseDTO;
     }
 
+    @Override
+    public Schedule findEntityById(Long id) {
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
+        if(!optionalSchedule.isPresent()){
+            throw new ScheduleNotFoundException(id);
+        }
+        return optionalSchedule.get();
+    }
     @Override
     public ScheduleResponseDTO save(ScheduleRequestDTO scheduleRequestDTO) {
         try{
@@ -63,25 +71,15 @@ public class ScheduleServiceImpl implements ScheduleService {
             schedule.setCourseGroup(scheduleRequestDTO.getCourseGroup());
             scheduleRepository.save(schedule);
             return modelMapper.map(schedule, ScheduleResponseDTO.class);
+        }catch (CourseNotFoundException | ScheduleCreationException e){
+            throw new ScheduleCreationException(e.getMessage(), e);
+        }catch (DataIntegrityViolationException e){
+            throw new ScheduleCreationException("Data integrity violation while creating the schedule: " + e.getMessage(), e);
         }catch (Exception e){
-            throw new RuntimeException("Something goes wrong creating the schedule: " + e.getMessage());
+            throw new ScheduleCreationException("An unexpected error occurred while creating the schedule.", e);
         }
     }
 
-    @Override
-    public Schedule findEntityById(Long id) {
-        try{
-            Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
-            if(optionalSchedule.isPresent()){
-                ModelMapper modelMapper = new ModelMapper();
-                Schedule schedule = optionalSchedule.get();
-                return schedule;
-            }
-        } catch (Exception e) {
-            System.err.println("Schedule with ID: " + e.getMessage() + "don´t exists in database");
-        }
-        return null;
-    }
 
     private static ScheduleResponseDTO getScheduleResponseDTO(Schedule schedule, ModelMapper modelMapper) {
         ScheduleResponseDTO scheduleResponseDTO = modelMapper.map(schedule, ScheduleResponseDTO.class);

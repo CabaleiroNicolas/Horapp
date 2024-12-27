@@ -1,5 +1,8 @@
 package com.horapp.service.impl;
 
+import com.horapp.exception.time_table.TimeTableCreationException;
+import com.horapp.exception.time_table.TimeTableNotFoundException;
+import com.horapp.exception.user.UserNotFoundException;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.TimeTable;
 import com.horapp.persistence.entity.User;
@@ -9,6 +12,7 @@ import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 import com.horapp.service.TimeTableService;
 import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,33 +39,28 @@ public class TimeTableServiceImpl implements TimeTableService {
 
     @Override
     public TimeTableResponseDTO findById(Long id) {
-        try{
-            Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
-            if(optionalTimeTable.isPresent()){
-                return getTimeTableResponseDTO(optionalTimeTable.get());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Schedule with ID: " + e.getMessage() + "don´t exists in database");
+        Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
+        if(!optionalTimeTable.isPresent()){
+            throw new TimeTableNotFoundException(id);
         }
-        return new TimeTableResponseDTO();
+        return getTimeTableResponseDTO(optionalTimeTable.get());
     }
 
     @Override
     public TimeTable findEntityById(Long id) {
-        try{
-            Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
-            if(optionalTimeTable.isPresent()){
-                return optionalTimeTable.get();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Schedule with ID: " + e.getMessage() + "don´t exists in database");
+        Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
+        if(!optionalTimeTable.isPresent()){
+            throw new TimeTableNotFoundException(id);
         }
-        return null;
+        return optionalTimeTable.get();
     }
 
 
     @Override
     public TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO) {
+        if(timeTableRequestDTO.getUsername().isEmpty()){
+            throw new NullPointerException("The field username must not be empty");
+        }
         try {
             User user = userService.findByUsername(timeTableRequestDTO.getUsername());
             TimeTable timeTable = new TimeTable();
@@ -70,30 +69,32 @@ public class TimeTableServiceImpl implements TimeTableService {
             timeTableRepository.save(timeTable);
             timeTableResponseDTO.setUsername(user.getUsername());
             return timeTableResponseDTO;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (TimeTableCreationException | UserNotFoundException e) {
+            throw new TimeTableCreationException(e.getMessage(), e);
+        }catch (DataIntegrityViolationException e) {
+            throw new TimeTableCreationException("Data integrity violation while creating the timeTable: " + e.getMessage(), e);
+        }catch (Exception e){
+            throw new TimeTableCreationException("An unexpected error occurred while creating the timeTable.", e);
         }
+
     }
 
     @Override
     public String deleteById(Long id) {
-        try{
-            Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
-            if(optionalTimeTable.isPresent()){
-                TimeTable timeTable = optionalTimeTable.get();
-                timeTable.setDeleted(true);
-                timeTableRepository.save(timeTable);
-                return "The TimeTable with id " + timeTable.getIdTimeTable() + " has been deleted successfully";
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("TimeTable with ID: " + e.getMessage() + "don´t exists in database");
+        Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
+        if(!optionalTimeTable.isPresent()) {
+            throw new TimeTableNotFoundException(id);
         }
-        return "";
+        TimeTable timeTable = optionalTimeTable.get();
+        timeTable.setDeleted(true);
+        timeTableRepository.save(timeTable);
+        return "The TimeTable with id " + id + " has been deleted successfully";
     }
 
     private static TimeTableResponseDTO getTimeTableResponseDTO(TimeTable timeTable) {
         TimeTableResponseDTO timeTableResponseDTO = new TimeTableResponseDTO();
         timeTableResponseDTO.setUsername(timeTable.getUser().getUsername());
+        timeTableResponseDTO.setId(timeTableResponseDTO.getId());
         List<String> courses = timeTable.getCourseList().stream().map(Course::getCourseName).collect(Collectors.toList());
         timeTableResponseDTO.setCourses(courses);
         return timeTableResponseDTO;
