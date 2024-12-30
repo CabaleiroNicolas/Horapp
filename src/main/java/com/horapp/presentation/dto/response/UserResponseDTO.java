@@ -6,6 +6,7 @@ public class UserResponseDTO {
     private String name;
     private String lastname;
     private String email;
+    private String jwt;
 
     public UserResponseDTO() {
     }
@@ -56,5 +57,13 @@ public class UserResponseDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 }

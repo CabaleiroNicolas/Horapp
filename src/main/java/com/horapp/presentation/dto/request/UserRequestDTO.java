@@ -5,6 +5,7 @@ public class UserRequestDTO {
     private String name;
     private String lastname;
     private String email;
+    private String password;
 
     public UserRequestDTO() {
     }
@@ -46,5 +47,13 @@ public class UserRequestDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
