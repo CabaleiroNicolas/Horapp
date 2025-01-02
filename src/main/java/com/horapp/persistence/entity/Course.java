@@ -16,8 +16,7 @@ public class Course {
 
     private boolean deleted;
 
-    @OneToMany(mappedBy = "course")
-    //@ElementCollection(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER , mappedBy = "course")
     private List<Schedule> scheduleList;
 
     @ManyToOne
@@ -32,7 +31,7 @@ public class Course {
     @JoinColumn(name = "id_major", nullable = false)
     private Major major;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(fetch = FetchType.EAGER ,mappedBy = "course")
     private List<Feedback> feedbacks;
 
     public Course() {

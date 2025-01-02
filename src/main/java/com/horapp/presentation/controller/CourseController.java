@@ -3,6 +3,7 @@ package com.horapp.presentation.controller;
 import com.horapp.presentation.dto.request.CourseRequestDTO;
 import com.horapp.presentation.dto.response.CourseResponseDTO;
 import com.horapp.service.CourseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseResponseDTO> save(@RequestBody CourseRequestDTO courseRequestDTO){
+    public ResponseEntity<CourseResponseDTO> save(@Valid @RequestBody CourseRequestDTO courseRequestDTO){
         return new ResponseEntity<>(courseService.save(courseRequestDTO), HttpStatus.CREATED);
     }
 

@@ -15,10 +15,8 @@ public class Schedule {
     private String courseGroup;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "schedule")
-    //@ElementCollection(fetch = FetchType.EAGER)
     private List<DayAndTime> daysAndTimes;
 
-    //posiblemente necesite @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_course", nullable = false)
     private Course course;

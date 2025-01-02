@@ -69,9 +69,12 @@ CREATE TABLE public.users
       name                  VARCHAR(255) DEFAULT NULL,
       username              VARCHAR(255) NOT NULL UNIQUE,
       email                 VARCHAR(255) NOT NULL UNIQUE,
-      deleted               BOOLEAN NOT NULL
-
+      enabled               BOOLEAN NOT NULL DEFAULT true,
+      account_non_locked    BOOLEAN NOT NULL DEFAULT true,
+      role VARCHAR(100)     NOT NULL,
+      password VARCHAR(255) NOT NULL
 );
+
 ALTER TABLE public.users ALTER COLUMN id_user SET DEFAULT nextval('users_id_seq');
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id_user;
 

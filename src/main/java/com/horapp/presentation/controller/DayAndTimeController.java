@@ -3,6 +3,7 @@ package com.horapp.presentation.controller;
 import com.horapp.presentation.dto.request.DayAndTimeRequestDTO;
 import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 import com.horapp.service.DayAndTimeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class DayAndTimeController {
     }
 
     @PostMapping
-    public ResponseEntity<DayAndTimeResponseDTO> save(@RequestBody DayAndTimeRequestDTO dayAndTimeRequestDTO){
+    public ResponseEntity<DayAndTimeResponseDTO> save(@Valid @RequestBody DayAndTimeRequestDTO dayAndTimeRequestDTO){
         return new ResponseEntity<>(dayAndTimeService.save(dayAndTimeRequestDTO), HttpStatus.CREATED);
     }
 }

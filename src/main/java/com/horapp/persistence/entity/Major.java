@@ -21,7 +21,7 @@ public class Major {
     @JoinColumn(name = "id_user")
     private User user;
 
-    @OneToMany(mappedBy = "major")
+    @OneToMany(fetch = FetchType.EAGER , mappedBy = "major")
     private List<Course> courseList;
 
     public Major() {

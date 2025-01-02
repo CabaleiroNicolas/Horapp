@@ -3,6 +3,7 @@ package com.horapp.presentation.controller;
 import com.horapp.presentation.dto.request.MajorRequestDTO;
 import com.horapp.presentation.dto.response.MajorResponseDTO;
 import com.horapp.service.MajorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class MajorController {
         return new ResponseEntity<>(majorService.findById(id), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<MajorResponseDTO> saveMajor(@RequestBody MajorRequestDTO majorRequestDTO){
+    public ResponseEntity<MajorResponseDTO> saveMajor(@Valid @RequestBody MajorRequestDTO majorRequestDTO){
         return new ResponseEntity<>(majorService.saveMajor(majorRequestDTO), HttpStatus.CREATED);
     }
     @DeleteMapping("/{id}")

@@ -21,9 +21,9 @@ public class User implements UserDetails {
     private String lastname;
     private String password;
     private boolean enabled;
-    private boolean accountNonExpired;
+    //private boolean accountNonExpired;
     private boolean accountNonLocked;
-    private boolean credentialsNonExpired;
+    //private boolean credentialsNonExpired;
 
     @Column(unique = true)
     private String email;
@@ -81,14 +81,14 @@ public class User implements UserDetails {
         return username;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return accountNonExpired;
+//    }
+//
+//    public void setAccountNonExpired(boolean accountNonExpired) {
+//        this.accountNonExpired = accountNonExpired;
+//    }
 
     @Override
     public boolean isAccountNonLocked() {
@@ -99,14 +99,14 @@ public class User implements UserDetails {
         this.accountNonLocked = accountNonLocked;
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-    }
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return credentialsNonExpired;
+//    }
+//
+//    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+//        this.credentialsNonExpired = credentialsNonExpired;
+//    }
 
     public void setUsername(String username) {
         this.username = username;

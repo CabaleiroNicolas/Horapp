@@ -64,20 +64,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(UserRequestDTO userRequestDTO) {
-        if(userRequestDTO.getUsername().isEmpty()
-                || userRequestDTO.getName().isEmpty()
-                || userRequestDTO.getLastname().isEmpty()
-                || userRequestDTO.getEmail().isEmpty()
-                || userRequestDTO.getPassword().isEmpty()){
-            throw new NullPointerException("The fields username, name, lastname, password and email must not be empty");
-        }
+    public String save(UserRequestDTO userRequestDTO) {
         try{
             Optional<User> optionalUser = userRepository.findByUsername(userRequestDTO.getUsername());
             if(optionalUser.isPresent()){
                 throw new UserCreationException("The user with username " + userRequestDTO.getUsername() + " is already created");
             }
-            ModelMapper modelMapper = new ModelMapper();
             User user = new User();
             user.setUsername(userRequestDTO.getUsername());
             user.setName(userRequestDTO.getName());
@@ -85,12 +77,10 @@ public class UserServiceImpl implements UserService {
             user.setLastname(userRequestDTO.getLastname());
             user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
             user.setRole(Role.STUDENT);
-            user.setAccountNonExpired(true);
             user.setEnabled(true);
             user.setAccountNonLocked(true);
-            user.setCredentialsNonExpired(true);
             userRepository.save(user);
-            return user;
+            return "The user was created successfully";
         } catch (UserCreationException e) {
             throw new UserCreationException(e.getMessage(), e);
         } catch (DataIntegrityViolationException e) {

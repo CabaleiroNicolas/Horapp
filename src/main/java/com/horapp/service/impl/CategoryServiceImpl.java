@@ -25,9 +25,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
-        if(categoryRequestDTO.getCategoryName().isEmpty() || categoryRequestDTO.getDescriptionName().isEmpty() ){
-            throw new NullPointerException("The fields categoryName and descriptionName must no be empty");
-        }
         try {
             Category category = new Category();
             ModelMapper modelMapper = new ModelMapper();
@@ -40,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
         } catch (DataIntegrityViolationException e){
             throw new CategoryCreationException("Data integrity violation while creating the category: " + e.getMessage(), e);
         } catch (Exception e){
-            throw new CategoryCreationException("An unexpected error occurred while creating the category.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 

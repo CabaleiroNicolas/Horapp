@@ -3,8 +3,6 @@ package com.horapp.service.auth;
 import com.horapp.persistence.entity.User;
 import com.horapp.presentation.dto.auth.AuthenticationRequest;
 import com.horapp.presentation.dto.auth.AuthenticationResponse;
-import com.horapp.presentation.dto.request.UserRequestDTO;
-import com.horapp.presentation.dto.response.UserResponseDTO;
 import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,18 +25,6 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public UserResponseDTO save(UserRequestDTO userRequestDTO){
-        User user = userService.save(userRequestDTO);
-        String jwt = jwtService.generateToken(user, generateExtraClaims(user));
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setUsername(user.getUsername());
-        userResponseDTO.setName(user.getName());
-        userResponseDTO.setLastname(user.getLastname());
-        userResponseDTO.setEmail(user.getEmail());
-        userResponseDTO.setId(user.getIdUser());
-        userResponseDTO.setJwt(jwt);
-        return userResponseDTO;
-    }
 
     private Map<String, Object> generateExtraClaims(User user) {
         Map<String, Object> extraClaims = new HashMap<>();
@@ -65,14 +51,5 @@ public class AuthenticationService {
         return authRsp;
     }
 
-    public boolean validateToken(String jwt) {
-        try{
-            jwtService.extractUsername(jwt);
-            return true;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,9 +31,6 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
-        if(majorRequestDTO.getMajorName().isEmpty()){
-            throw new NullPointerException("The field majorName must not be empty");
-        }
         try {
             Major major = new Major();
             major.setMajorName(majorRequestDTO.getMajorName());
@@ -53,7 +51,7 @@ public class MajorServiceImpl implements MajorService {
         } catch (DataIntegrityViolationException e) {
             throw new MajorCreationException("Data integrity violation while creating the major: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new MajorCreationException("An unexpected error occurred while creating the major.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 
@@ -112,9 +110,11 @@ public class MajorServiceImpl implements MajorService {
     }
 
     private static List<String> extractCourses(Major major) {
-        List<String> courses = major.getCourseList().stream()
+        List<String> courses = major.getCourseList() != null
+                ? major.getCourseList().stream()
                 .map(Course::getCourseName)
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                : Collections.emptyList();
         return courses;
     }
 }

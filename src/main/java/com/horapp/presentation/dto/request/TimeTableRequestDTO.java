@@ -1,6 +1,9 @@
 package com.horapp.presentation.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public class TimeTableRequestDTO {
+    @NotEmpty(message = "The username must not be empty.")
     private String username;
 
     public TimeTableRequestDTO() {

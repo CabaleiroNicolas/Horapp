@@ -14,7 +14,7 @@ public class Feedback {
 
     private String descriptionName;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "feedback_category_relationship",
             joinColumns = @JoinColumn(name = "id_feedback"),

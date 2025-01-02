@@ -49,9 +49,6 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
     @Override
     public DayAndTimeResponseDTO save(DayAndTimeRequestDTO dayAndTimeRequestDTO) {
-        if(dayAndTimeRequestDTO.getStartTime().isEmpty() || dayAndTimeRequestDTO.getEndTime().isEmpty() || dayAndTimeRequestDTO.getDay().isEmpty()){
-            throw new NullPointerException("The fields StartTime, EndTime, Day must not be empty");
-        }
         try {
             Schedule schedule = scheduleService.findEntityById(dayAndTimeRequestDTO.getIdSchedule());
             DayAndTime dayAndTime = new DayAndTime();
@@ -66,7 +63,7 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
         } catch (DataIntegrityViolationException e){
             throw new DayAndTimeCreationException("Data integrity violation while creating the dayAndTime: " + e.getMessage(), e);
         } catch (Exception e){
-            throw new DayAndTimeCreationException("An unexpected error occurred while creating the dayAndTime.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 

@@ -16,8 +16,7 @@ public class TimeTable {
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "timeTable")
-    //@ElementCollection(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "timeTable")
     private List<Course> courseList;
 
     private boolean deleted;
