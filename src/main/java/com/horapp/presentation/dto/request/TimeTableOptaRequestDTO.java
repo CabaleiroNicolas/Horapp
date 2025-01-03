@@ -1,10 +1,18 @@
 package com.horapp.presentation.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public class TimeTableOptaRequestDTO {
+    @NotNull(message = "The idUser must not be null.")
+    @Positive(message = "The idUser must be a positive number.")
     private Long idUser;
-    private List<Long> coursesId;
+    @NotNull(message = "The coursesId list must not be null.")
+    @Size(min = 1, message = "There must be at least one coursesId.")
+    private List<@Positive(message = "Each coursesId must be a positive number.") Long> coursesId;
 
     public TimeTableOptaRequestDTO() {
     }

@@ -1,12 +1,16 @@
 package com.horapp.persistence.entity;
 
+import com.horapp.util.Role;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User{
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_gen")
     @SequenceGenerator(name = "user_seq_gen", sequenceName = "users_id_seq", allocationSize = 1)
@@ -15,10 +19,15 @@ public class User{
     private String username;
     private String name;
     private String lastname;
+    private String password;
+    private boolean enabled;
+    //private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    //private boolean credentialsNonExpired;
 
     @Column(unique = true)
     private String email;
-    private boolean deleted;
+
 
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "user")
     private Major major;
@@ -28,6 +37,9 @@ public class User{
 
     @OneToMany(mappedBy = "user")
     private List<TimeTable> timeTablesList;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public User() {
     }
@@ -51,9 +63,50 @@ public class User{
         this.idUser = idUser;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getUsername() {
         return username;
     }
+
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return accountNonExpired;
+//    }
+//
+//    public void setAccountNonExpired(boolean accountNonExpired) {
+//        this.accountNonExpired = accountNonExpired;
+//    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return credentialsNonExpired;
+//    }
+//
+//    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+//        this.credentialsNonExpired = credentialsNonExpired;
+//    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -107,11 +160,20 @@ public class User{
         this.timeTablesList = timeTablesList;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

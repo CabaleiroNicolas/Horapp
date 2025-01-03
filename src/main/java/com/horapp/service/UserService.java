@@ -15,7 +15,7 @@ public interface UserService {
 
     User findByUsername(String username);
 
-    UserResponseDTO save(UserRequestDTO userRequestDTO);
+    String save(UserRequestDTO userRequestDTO);
 
     String deleteById(Long id);
 }

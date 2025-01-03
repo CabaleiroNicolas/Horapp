@@ -70,9 +70,6 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseResponseDTO save(CourseRequestDTO courseRequestDTO) {
-        if(courseRequestDTO.getCourseName().isEmpty() || courseRequestDTO.getMajorId() == null){
-            throw new NullPointerException("The fields courseName and majorId must not be empty");
-        }
         try {
             Major major = majorService.findEntityById(courseRequestDTO.getMajorId());
             Course course = new Course();
@@ -98,7 +95,7 @@ public class CourseServiceImpl implements CourseService {
         }catch (DataIntegrityViolationException e) {
             throw new CourseCreationException("Data integrity violation while creating the course: " + e.getMessage(), e);
         }catch (Exception e){
-            throw new CourseCreationException("An unexpected error occurred while creating the course.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 

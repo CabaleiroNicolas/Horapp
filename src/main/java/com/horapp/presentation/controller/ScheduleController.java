@@ -3,6 +3,7 @@ package com.horapp.presentation.controller;
 import com.horapp.presentation.dto.request.ScheduleRequestDTO;
 import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 import com.horapp.service.ScheduleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody ScheduleRequestDTO scheduleRequestDTO){
+    public ResponseEntity<Object> save(@Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO){
         return new ResponseEntity<>(scheduleService.save(scheduleRequestDTO), HttpStatus.CREATED);
     }
 

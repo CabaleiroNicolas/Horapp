@@ -7,9 +7,11 @@ import com.horapp.persistence.repository.UserRepository;
 import com.horapp.presentation.dto.request.UserRequestDTO;
 import com.horapp.presentation.dto.response.UserResponseDTO;
 import com.horapp.service.UserService;
+import com.horapp.util.Role;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +23,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public List<UserResponseDTO> findAll() {
         ModelMapper modelMapper = new ModelMapper();
-        return userRepository.findByDeletedFalse().stream()
+        return userRepository.findByEnabledTrue().stream()
                 .map(user -> modelMapper.map(user, UserResponseDTO.class))
                 .collect(Collectors.toList());
     }
@@ -59,33 +64,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO save(UserRequestDTO userRequestDTO) {
-        if(userRequestDTO.getUsername().isEmpty()
-                || userRequestDTO.getName().isEmpty()
-                || userRequestDTO.getLastname().isEmpty()
-                || userRequestDTO.getEmail().isEmpty()){
-            throw new NullPointerException("The fields username, name, lastname and email must not be empty");
+    public String save(UserRequestDTO userRequestDTO) {
+        try{
+            Optional<User> optionalUser = userRepository.findByUsername(userRequestDTO.getUsername());
+            if(optionalUser.isPresent()){
+                throw new UserCreationException("The user with username " + userRequestDTO.getUsername() + " is already created");
+            }
+            User user = new User();
+            user.setUsername(userRequestDTO.getUsername());
+            user.setName(userRequestDTO.getName());
+            user.setEmail(userRequestDTO.getEmail());
+            user.setLastname(userRequestDTO.getLastname());
+            user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+            user.setRole(Role.STUDENT);
+            user.setEnabled(true);
+            user.setAccountNonLocked(true);
+            userRepository.save(user);
+            return "The user was created successfully";
+        } catch (UserCreationException e) {
+            throw new UserCreationException(e.getMessage(), e);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserCreationException("Data integrity violation while creating the user: " + e.getMessage(), e);
+        } catch (Exception e){
+            throw new RuntimeException(e.getCause());
         }
-       try{
-           Optional<User> optionalUser = userRepository.findByUsername(userRequestDTO.getUsername());
-           if(optionalUser.isPresent()){
-               throw new UserCreationException("The user with username " + userRequestDTO.getUsername() + " is already created");
-           }
-               ModelMapper modelMapper = new ModelMapper();
-               User user = new User();
-               user.setUsername(userRequestDTO.getUsername());
-               user.setName(userRequestDTO.getName());
-               user.setEmail(userRequestDTO.getEmail());
-               user.setLastname(userRequestDTO.getLastname());
-               userRepository.save(user);
-               return modelMapper.map(user, UserResponseDTO.class);
-       } catch (UserCreationException e) {
-           throw new UserCreationException(e.getMessage(), e);
-       } catch (DataIntegrityViolationException e) {
-           throw new UserCreationException("Data integrity violation while creating the user: " + e.getMessage(), e);
-       }catch (Exception e){
-           throw new UserCreationException("An unexpected error occurred while creating the user.", e);
-       }
     }
 
     @Override
@@ -95,9 +97,8 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException(id);
         }
         User userToDelete = optionalUser.get();
-        userToDelete.setDeleted(true);
+        userToDelete.setEnabled(false);
         userRepository.save(userToDelete);
         return "The User with ID " + userToDelete.getIdUser()+ " was deleted successfully";
-
     }
 }

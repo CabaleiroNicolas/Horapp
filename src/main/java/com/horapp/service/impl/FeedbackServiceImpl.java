@@ -38,9 +38,6 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackResponseDTO save(FeedbackRequestDTO feedbackRequestDTO) {
-        if(feedbackRequestDTO.getDescriptionName().isEmpty()){
-            throw new NullPointerException("The field description name must not be empty");
-        }
         try {
             Feedback feedback = new Feedback();
             ModelMapper modelMapper = new ModelMapper();
@@ -70,7 +67,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         } catch (DataIntegrityViolationException e) {
             throw new FeedbackCreationException("Data integrity violation while creating the feedback: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new FeedbackCreationException("An unexpected error occurred while creating the feedback.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 

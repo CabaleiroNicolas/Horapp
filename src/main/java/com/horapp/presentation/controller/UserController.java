@@ -3,6 +3,7 @@ package com.horapp.presentation.controller;
 import com.horapp.presentation.dto.request.UserRequestDTO;
 import com.horapp.presentation.dto.response.UserResponseDTO;
 import com.horapp.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> save(@RequestBody UserRequestDTO userRequestDTO){
+    public ResponseEntity<String> save(@Valid @RequestBody UserRequestDTO userRequestDTO){
         return new ResponseEntity<>(userService.save(userRequestDTO), HttpStatus.CREATED);
     }
 
@@ -36,5 +37,4 @@ public class UserController {
     public ResponseEntity<String> deleteById(@PathVariable Long id){
         return new ResponseEntity<>(userService.deleteById(id), HttpStatus.NO_CONTENT);
     }
-
 }

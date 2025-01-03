@@ -58,9 +58,6 @@ public class TimeTableServiceImpl implements TimeTableService {
 
     @Override
     public TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO) {
-        if(timeTableRequestDTO.getUsername().isEmpty()){
-            throw new NullPointerException("The field username must not be empty");
-        }
         try {
             User user = userService.findByUsername(timeTableRequestDTO.getUsername());
             TimeTable timeTable = new TimeTable();
@@ -74,7 +71,7 @@ public class TimeTableServiceImpl implements TimeTableService {
         }catch (DataIntegrityViolationException e) {
             throw new TimeTableCreationException("Data integrity violation while creating the timeTable: " + e.getMessage(), e);
         }catch (Exception e){
-            throw new TimeTableCreationException("An unexpected error occurred while creating the timeTable.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
 
     }
@@ -94,7 +91,7 @@ public class TimeTableServiceImpl implements TimeTableService {
     private static TimeTableResponseDTO getTimeTableResponseDTO(TimeTable timeTable) {
         TimeTableResponseDTO timeTableResponseDTO = new TimeTableResponseDTO();
         timeTableResponseDTO.setUsername(timeTable.getUser().getUsername());
-        timeTableResponseDTO.setId(timeTableResponseDTO.getId());
+        timeTableResponseDTO.setId(timeTable.getIdTimeTable());
         List<String> courses = timeTable.getCourseList().stream().map(Course::getCourseName).collect(Collectors.toList());
         timeTableResponseDTO.setCourses(courses);
         return timeTableResponseDTO;

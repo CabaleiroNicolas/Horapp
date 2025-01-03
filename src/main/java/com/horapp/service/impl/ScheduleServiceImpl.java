@@ -76,7 +76,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         }catch (DataIntegrityViolationException e){
             throw new ScheduleCreationException("Data integrity violation while creating the schedule: " + e.getMessage(), e);
         }catch (Exception e){
-            throw new ScheduleCreationException("An unexpected error occurred while creating the schedule.", e);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 
