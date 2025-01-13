@@ -43,21 +43,23 @@ public class SolverServiceImpl implements SolverService{
 
     @Override
     public TimeTableOptaResponseDTO solveProblem(TimeTableOptaRequestDTO timeTableOptaRequestDTO) {
+
         SolverFactory<TimeTableOptaPlanner> solverFactory = SolverFactory.create(solverConfig);
         Solver<TimeTableOptaPlanner> solver = solverFactory.buildSolver();
-        List<Course> courses = courseService.findAllOpta(timeTableOptaRequestDTO.getCoursesId());
+        List<Course> courses = courseService.findAllByIdList(timeTableOptaRequestDTO.coursesId());
+
         // Mapear a TimeTableOptaPlanner
-        TimeTableOptaPlanner problem = TimeTableOptaMapper.mapToTimeTableOptaPlanner(timeTableOptaRequestDTO, courses);
+        TimeTableOptaPlanner problem = TimeTableOptaMapper.mapToTimeTableOptaPlanner(courses);
         problem.sortSchedules();
+
         TimeTableOptaPlanner solvedTimeTable = solver.solve(problem);
-        // Mapear el resultado al DTO de respuesta
+
+        // Mapear el resultado al DTO de respuesta.
         List<ScheduleAssignedDTO> result = ScheduleAssignedDTOMapper.toScheduleAssignedDTOList(solvedTimeTable);
-        TimeTableOptaResponseDTO responseDTO = new TimeTableOptaResponseDTO();
-        User user = userService.findEntityById(timeTableOptaRequestDTO.getIdUser());
-        Major major = majorService.findEntityById(user.getMajor().getIdMajor());
-        responseDTO.setUsername(user.getUsername());
-        responseDTO.setMajor(major.getMajorName());
-        responseDTO.setScheduleAssignedList(result);
+        TimeTableOptaResponseDTO responseDTO = new TimeTableOptaResponseDTO(result);
+
+
+        //Ver si hard-score es mayor a 0 devolver un mensaje de error.
         System.out.println(solvedTimeTable.getScore());
         return responseDTO;
     }
