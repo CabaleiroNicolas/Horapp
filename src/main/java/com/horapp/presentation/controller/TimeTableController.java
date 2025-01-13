@@ -31,8 +31,8 @@ public class TimeTableController {
 
 
     @Operation(
-            summary = "Actualizar la propiedad deliveryPrice de un restaurante",
-            description = "Recibe un valor de delivery y actualiza la propiedad deliveryPrice del restaurante",
+            summary = "..",
+            description = "..",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Request body con la lista de cursos a ordenar con sus respectivas comisiones",
                     required = true,
@@ -56,15 +56,7 @@ public class TimeTableController {
     }
     @Operation(
             summary = "Obtener todas las TimeTable no deshabilitadas",
-            description = "Devuelve todas las timetable",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Request body con la lista de timetable",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
-                    )
-            ))
+            description = "Devuelve todas las timetable")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
@@ -75,64 +67,55 @@ public class TimeTableController {
         return  new ResponseEntity<>(timeTableService.findAll(), HttpStatus.OK);
     }
     @Operation(
-            summary = "Obtener una TimeTable",
-            description = "Devuelve una timetable",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Path variable con el id de la tabla que se desea obtener",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
-                    )
-            ))
+            summary = "Obtener una TimeTable por su ID",
+            description = "Devuelve una timetable"
+            )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
-    @GetMapping("/{id}")
-    public ResponseEntity<TimeTableResponseDTO> findById(@PathVariable Long id){
-        return new ResponseEntity<>(timeTableService.findById(id), HttpStatus.OK);
+    @GetMapping("/{timeTableId}")
+    public ResponseEntity<TimeTableResponseDTO> findById(@PathVariable Long timetableId){
+        return new ResponseEntity<>(timeTableService.findById(timetableId), HttpStatus.OK);
     }
-    @Operation(
-            summary = "Crear una TimeTable sin optaplanner",
-            description = "Se guaraa una timetable",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Request body con la lista de cursos a ordenar con sus respectivas comisiones",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
-                    )
-            ))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
 
-    @PostMapping
-    public ResponseEntity<TimeTableResponseDTO> save(@Valid @RequestBody TimeTableRequestDTO timeTableRequestDTO){
-        return new ResponseEntity<>(timeTableService.save(timeTableRequestDTO), HttpStatus.CREATED);
-    }
+//    @Operation(
+//            summary = "Crear una TimeTable sin optaplanner",
+//            description = "Se guaraa una timetable",
+//            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+//                    description = "Request body con la lista de cursos a ordenar con sus respectivas comisiones",
+//                    required = true,
+//                    content = @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
+//                    )
+//            ))
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
+//            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+//            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+//            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
+//
+//    @PostMapping
+//    public ResponseEntity<TimeTableResponseDTO> save(@Valid @RequestBody TimeTableRequestDTO timeTableRequestDTO){
+//        return new ResponseEntity<>(timeTableService.save(timeTableRequestDTO), HttpStatus.CREATED);
+//    }
+
     @Operation(
             summary = "Deshabilitar una TimeTable",
             description = "Deshabilita una timetable",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Path variable con el id de la tabla que se desea deshabilitar",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
-                    )
+                    required = true
             ))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id){
-        return new ResponseEntity<>(timeTableService.deleteById(id), HttpStatus.OK);
+    @DeleteMapping("/{timeTableId}")
+    public ResponseEntity<String> deleteById(@PathVariable Long timeTableId){
+        return new ResponseEntity<>(timeTableService.deleteById(timeTableId), HttpStatus.OK);
     }
 }

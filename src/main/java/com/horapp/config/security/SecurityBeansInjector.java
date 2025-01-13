@@ -41,6 +41,7 @@ public class SecurityBeansInjector {
     @Bean
     public UserDetailsService userDetailsService(){
         return (username) -> {
+            //Llamar a un servicio de use y no al repo directamente
             return userRepository.findByUsername(username)
                     .orElseThrow(() -> new UserNotFoundException(username));
         };
