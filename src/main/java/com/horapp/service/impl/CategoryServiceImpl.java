@@ -1,7 +1,5 @@
 package com.horapp.service.impl;
 
-import com.horapp.exception.category.CategoryCreationException;
-import com.horapp.exception.category.CategoryNotFoundException;
 import com.horapp.persistence.entity.Category;
 import com.horapp.persistence.repository.CategoryRepository;
 import com.horapp.presentation.dto.request.CategoryRequestDTO;
@@ -9,8 +7,8 @@ import com.horapp.presentation.dto.response.CategoryResponseDTO;
 import com.horapp.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,29 +23,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
-        try {
-            Category category = new Category();
-            ModelMapper modelMapper = new ModelMapper();
-            category.setCategoryName(categoryRequestDTO.getCategoryName());
-            category.setDescriptionName(categoryRequestDTO.getDescriptionName());
-            categoryRepository.save(category);
-            return modelMapper.map(category, CategoryResponseDTO.class);
-        } catch (CategoryNotFoundException e) {
-            throw new CategoryCreationException(e.getMessage(), e);
-        } catch (DataIntegrityViolationException e){
-            throw new CategoryCreationException("Data integrity violation while creating the category: " + e.getMessage(), e);
-        } catch (Exception e){
-            throw new RuntimeException(e.getMessage(), e.getCause());
-        }
+        Category category = new Category();
+        ModelMapper modelMapper = new ModelMapper();
+        category.setCategoryName(categoryRequestDTO.getCategoryName());
+        category.setDescriptionName(categoryRequestDTO.getDescriptionName());
+        categoryRepository.save(category);
+        return modelMapper.map(category, CategoryResponseDTO.class);
     }
 
     @Override
     public List<CategoryResponseDTO> findAll() {
         ModelMapper modelMapper = new ModelMapper();
         return categoryRepository.findByDeletedFalse().stream()
-                .map(category -> {
-                    return getCategoryResponseDTO(category);
-                })
+                .map(CategoryServiceImpl::getCategoryResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -56,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponseDTO findById(Long id) {
         Optional<Category> category = categoryRepository.findById(id);
         if(!category.isPresent()){
-            throw new CategoryNotFoundException(id);
+            throw new NotFoundException("Category not found with Id = " + id);
         }
         Category categoryFind = category.get();
         return getCategoryResponseDTO(categoryFind);
@@ -65,8 +53,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category findEntityById(Long id) {
         Optional<Category> category = categoryRepository.findById(id);
-        if(!category.isPresent()){
-            throw new CategoryNotFoundException(id);
+        if(category.isEmpty()){
+            throw new NotFoundException("Category not found with Id = " + id);
         }
             ModelMapper modelMapper = new ModelMapper();
             Category categoryFind = category.get();
@@ -77,8 +65,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String deleteById(Long id) {
         Optional<Category> category = categoryRepository.findById(id);
-        if(!category.isPresent()){
-            throw new CategoryNotFoundException(id);
+        if(category.isEmpty()){
+            throw new NotFoundException("Category not found with Id = " + id);
         }
             Category categoryToDelete = category.get();
             categoryToDelete.setDeleted(true);

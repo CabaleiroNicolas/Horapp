@@ -1,8 +1,5 @@
 package com.horapp.service.impl;
 
-import com.horapp.exception.course.CourseCreationException;
-import com.horapp.exception.course.CourseNotFoundException;
-import com.horapp.exception.major.MajorNotFoundException;
 import com.horapp.persistence.entity.*;
 import com.horapp.persistence.repository.CourseRepository;
 import com.horapp.presentation.dto.request.CourseRequestDTO;
@@ -12,8 +9,8 @@ import com.horapp.service.MajorService;
 import com.horapp.service.TimeTableService;
 import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,9 +34,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseResponseDTO> findAll() {
         return courseRepository.findByDeletedFalse().stream()
-                .map(course -> {
-                    return getCourseResponseDTO(course);
-                })
+                .map(CourseServiceImpl::getCourseResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -52,8 +47,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponseDTO findById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findById(id);
-        if(!optionalCourse.isPresent()){
-           throw new CourseNotFoundException(id);
+        if(optionalCourse.isEmpty()){
+            throw new NotFoundException("Course not found with Id = " + id);
         }
         Course course = optionalCourse.get();
         return getCourseResponseDTO(course);
@@ -63,47 +58,39 @@ public class CourseServiceImpl implements CourseService {
     public Course findEntityById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findById(id);
         if(!optionalCourse.isPresent()){
-            throw new CourseNotFoundException(id);
+            throw new NotFoundException("Course not found with Id = " + id);
         }
         return optionalCourse.get();
     }
 
     @Override
     public CourseResponseDTO save(CourseRequestDTO courseRequestDTO) {
-        try {
-            Major major = majorService.findEntityById(courseRequestDTO.getMajorId());
-            Course course = new Course();
-            CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
-            if(courseRequestDTO.getUserId()!= null){
-                User user = userService.findEntityById(courseRequestDTO.getUserId());
-                course.setUser(user);
-                courseResponseDTO.setUsername(user.getUsername());
-            }
-            if(courseRequestDTO.getTableId() != null){
-                TimeTable timeTable = timeTableService.findEntityById(courseRequestDTO.getTableId());
-                course.setTimeTable(timeTable);
-                courseResponseDTO.setTableId(timeTable.getIdTimeTable());
-            }
-            course.setCourseName(courseRequestDTO.getCourseName());
-            course.setMajor(major);
-            courseRepository.save(course);
-            courseResponseDTO.setCourseName(course.getCourseName());
-            courseResponseDTO.setMajorName(major.getMajorName());
-            return courseResponseDTO;
-        } catch (MajorNotFoundException | CourseCreationException e) {
-            throw new CourseCreationException(e.getMessage(), e);
-        }catch (DataIntegrityViolationException e) {
-            throw new CourseCreationException("Data integrity violation while creating the course: " + e.getMessage(), e);
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage(), e.getCause());
+        Major major = majorService.findEntityById(courseRequestDTO.getMajorId());
+        Course course = new Course();
+        CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
+        if(courseRequestDTO.getUserId()!= null){
+            User user = userService.findEntityById(courseRequestDTO.getUserId());
+            course.setUser(user);
+            courseResponseDTO.setUsername(user.getUsername());
         }
+        if(courseRequestDTO.getTableId() != null){
+            TimeTable timeTable = timeTableService.findEntityById(courseRequestDTO.getTableId());
+            course.setTimeTable(timeTable);
+            courseResponseDTO.setTableId(timeTable.getIdTimeTable());
+        }
+        course.setCourseName(courseRequestDTO.getCourseName());
+        course.setMajor(major);
+        courseRepository.save(course);
+        courseResponseDTO.setCourseName(course.getCourseName());
+        courseResponseDTO.setMajorName(major.getMajorName());
+        return courseResponseDTO;
     }
 
     @Override
     public String deleteById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findById(id);
-        if(!optionalCourse.isPresent()){
-            throw new CourseNotFoundException(id);
+        if(optionalCourse.isEmpty()){
+            throw new NotFoundException("Course not found with Id = " + id);
         }
             Course courseToDelete = optionalCourse.get();
             courseToDelete.setDeleted(true);

@@ -1,7 +1,6 @@
 package com.horapp.service.impl;
 
 import com.horapp.exception.user.UserCreationException;
-import com.horapp.exception.user.UserNotFoundException;
 import com.horapp.persistence.entity.User;
 import com.horapp.persistence.repository.UserRepository;
 import com.horapp.presentation.dto.request.UserRequestDTO;
@@ -10,9 +9,9 @@ import com.horapp.service.UserService;
 import com.horapp.util.Role;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,8 +36,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO findById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        if(!optionalUser.isPresent()){
-            throw new UserNotFoundException(id);
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("User not found with Id = " + id);
         }
         ModelMapper modelMapper = new ModelMapper();
         User user = optionalUser.get();
@@ -48,24 +47,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findEntityById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        if(!optionalUser.isPresent()){
-            throw new UserNotFoundException(id);
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("User not found with Id = " + id);
         }
         return optionalUser.get();
     }
     @Override
     public User findByUsername(String username){
         Optional<User> optionalUser = userRepository.findByUsername(username);
-        if(!optionalUser.isPresent()){
-            throw new UserNotFoundException(username);
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("User not found with username = ".concat(username));
         }
-        User user = optionalUser.get();
-        return user;
+        return optionalUser.get();
     }
 
     @Override
     public String save(UserRequestDTO userRequestDTO) {
-        try{
             Optional<User> optionalUser = userRepository.findByUsername(userRequestDTO.getUsername());
             if(optionalUser.isPresent()){
                 throw new UserCreationException("The user with username " + userRequestDTO.getUsername() + " is already created");
@@ -81,20 +78,13 @@ public class UserServiceImpl implements UserService {
             user.setAccountNonLocked(true);
             userRepository.save(user);
             return "The user was created successfully";
-        } catch (UserCreationException e) {
-            throw new UserCreationException(e.getMessage(), e);
-        } catch (DataIntegrityViolationException e) {
-            throw new UserCreationException("Data integrity violation while creating the user: " + e.getMessage(), e);
-        } catch (Exception e){
-            throw new RuntimeException(e.getCause());
-        }
     }
 
     @Override
     public String deleteById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        if(!optionalUser.isPresent()){
-            throw new UserNotFoundException(id);
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("User not found with Id = " + id);
         }
         User userToDelete = optionalUser.get();
         userToDelete.setEnabled(false);

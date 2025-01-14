@@ -1,8 +1,5 @@
 package com.horapp.service.impl;
 
-import com.horapp.exception.category.CategoryNotFoundException;
-import com.horapp.exception.feedback.FeedbackCreationException;
-import com.horapp.exception.feedback.FeedbackNotFoundException;
 import com.horapp.persistence.entity.Category;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Feedback;
@@ -15,8 +12,8 @@ import com.horapp.service.CourseService;
 import com.horapp.service.FeedbackService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +35,6 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackResponseDTO save(FeedbackRequestDTO feedbackRequestDTO) {
-        try {
             Feedback feedback = new Feedback();
             ModelMapper modelMapper = new ModelMapper();
             feedback.setDescriptionName(feedbackRequestDTO.getDescriptionName());
@@ -59,16 +55,8 @@ public class FeedbackServiceImpl implements FeedbackService {
             if (feedbackRequestDTO.getCourseId() != null) {
                 feedbackResponseDTO.setCourse(feedback.getCourse().getCourseName());
             }
-
             return feedbackResponseDTO;
 
-        } catch (CategoryNotFoundException | FeedbackNotFoundException e) {
-            throw new FeedbackCreationException(e.getMessage(), e);
-        } catch (DataIntegrityViolationException e) {
-            throw new FeedbackCreationException("Data integrity violation while creating the feedback: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e.getCause());
-        }
     }
 
     @Override
@@ -86,8 +74,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackResponseDTO findById(Long id) {
         Optional<Feedback> optionalFeedback = feedbackRepository.findById(id);
-        if(!optionalFeedback.isPresent()){
-            throw new FeedbackNotFoundException(id);
+        if(optionalFeedback.isEmpty()){
+            throw new NotFoundException("Feedback not found with Id = " + id);
         }
             ModelMapper modelMapper = new ModelMapper();
             Feedback feedbackFind = optionalFeedback.get();

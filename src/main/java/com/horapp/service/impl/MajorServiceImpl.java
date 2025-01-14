@@ -1,8 +1,5 @@
 package com.horapp.service.impl;
 
-import com.horapp.exception.major.MajorCreationException;
-import com.horapp.exception.major.MajorNotFoundException;
-import com.horapp.exception.user.UserNotFoundException;
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.Major;
 import com.horapp.persistence.entity.User;
@@ -13,8 +10,8 @@ import com.horapp.service.MajorService;
 import com.horapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +28,6 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
-        try {
             Major major = new Major();
             major.setMajorName(majorRequestDTO.getMajorName());
             major.setDeleted(false);
@@ -46,43 +42,32 @@ public class MajorServiceImpl implements MajorService {
             majorResponseDTO.setCourses(courses);
             majorRepository.save(major);
             return majorResponseDTO;
-        } catch (MajorNotFoundException | UserNotFoundException e) {
-            throw new MajorCreationException(e.getMessage(), e);
-        } catch (DataIntegrityViolationException e) {
-            throw new MajorCreationException("Data integrity violation while creating the major: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e.getCause());
-        }
     }
 
 
     @Override
     public List<MajorResponseDTO> findAll() {
         return majorRepository.findByDeletedFalse().stream()
-                .map(major -> {
-                    MajorResponseDTO majorResponseDTO = getMajorResponseDTO(major);
-                    return  majorResponseDTO;
-                })
+                .map(MajorServiceImpl::getMajorResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public MajorResponseDTO findById(Long id) {
         Optional<Major> optionalMajor = majorRepository.findById(id);
-            if(!optionalMajor.isPresent()){
-                throw new MajorNotFoundException(id);
+            if(optionalMajor.isEmpty()){
+                throw new NotFoundException("Major not found with Id = " + id);
             }
-                Major major = optionalMajor.get();
-                MajorResponseDTO majorResponseDTO = getMajorResponseDTO(major);
-                return  majorResponseDTO;
+            Major major = optionalMajor.get();
+            return getMajorResponseDTO(major);
         }
 
 
     @Override
     public Major findEntityById(Long id) {
         Optional<Major> optionalMajor = majorRepository.findById(id);
-        if(!optionalMajor.isPresent()){
-            throw new MajorNotFoundException(id);
+        if(optionalMajor.isEmpty()){
+            throw new NotFoundException("Major not found with Id = " + id);
         }
         return  optionalMajor.get();
     }
@@ -90,8 +75,8 @@ public class MajorServiceImpl implements MajorService {
     @Override
     public String deleteById(Long id) {
         Optional<Major> optionalMajor = majorRepository.findById(id);
-        if(!optionalMajor.isPresent()){
-            throw new MajorNotFoundException(id);
+        if(optionalMajor.isEmpty()){
+            throw new NotFoundException("Major not found with Id = " + id);
         }
             ModelMapper modelMapper = new ModelMapper();
             Major major = optionalMajor.get();
@@ -110,11 +95,10 @@ public class MajorServiceImpl implements MajorService {
     }
 
     private static List<String> extractCourses(Major major) {
-        List<String> courses = major.getCourseList() != null
+        return major.getCourseList() != null
                 ? major.getCourseList().stream()
                 .map(Course::getCourseName)
                 .collect(Collectors.toList())
                 : Collections.emptyList();
-        return courses;
     }
 }
