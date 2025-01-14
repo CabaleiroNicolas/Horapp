@@ -39,7 +39,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> findAllOpta(List<Long> idList) {
+    public List<Course> findAllByIdList(List<Long> idList) {
         return courseRepository.findByIdCourseInAndDeletedFalse(idList);
     }
 

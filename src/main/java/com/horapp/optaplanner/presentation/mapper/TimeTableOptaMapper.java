@@ -1,6 +1,5 @@
 package com.horapp.optaplanner.presentation.mapper;
 
-import com.horapp.presentation.dto.request.TimeTableOptaRequestDTO;
 import com.horapp.optaplanner.modeldomainOP.CourseOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.DayAndTimeOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.ScheduleOptaPlanner;
@@ -13,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TimeTableOptaMapper {
-    public static TimeTableOptaPlanner mapToTimeTableOptaPlanner(TimeTableOptaRequestDTO requestDTO, List<Course> courses) {
+    public static TimeTableOptaPlanner mapToTimeTableOptaPlanner(List<Course> courses) {
         TimeTableOptaPlanner timeTableOptaPlanner = new TimeTableOptaPlanner();
 
         List<CourseOptaPlanner> courseOptaList = courses.stream()
@@ -24,13 +23,11 @@ public class TimeTableOptaMapper {
 
                     // Mapear los horarios disponibles
                     List<ScheduleOptaPlanner> scheduleOptaList = course.getScheduleList().stream()
+                            .filter(schedule -> (schedule.getDaysAndTimes() != null && !schedule.getDaysAndTimes().isEmpty()))
                             .map(schedule -> {
-                                // Filtrar horarios sin DayAndTime
-                                if (schedule.getDaysAndTimes() == null || schedule.getDaysAndTimes().isEmpty()) {
-                                    return null; // Excluir horarios inválidos
-                                }
 
                                 ScheduleOptaPlanner scheduleOpta = new ScheduleOptaPlanner();
+
                                 scheduleOpta.setCourseGroup(schedule.getCourseGroup());
 
                                 // Mapear los días y horas
