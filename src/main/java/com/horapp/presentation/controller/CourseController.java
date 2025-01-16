@@ -29,7 +29,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseResponseDTO> save(@Valid @RequestBody CourseRequestDTO courseRequestDTO){
+    public ResponseEntity<String> save(@Valid @RequestBody CourseRequestDTO courseRequestDTO){
         return new ResponseEntity<>(courseService.save(courseRequestDTO), HttpStatus.CREATED);
     }
 

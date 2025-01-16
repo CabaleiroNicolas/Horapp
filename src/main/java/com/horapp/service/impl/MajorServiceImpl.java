@@ -8,7 +8,6 @@ import com.horapp.presentation.dto.request.MajorRequestDTO;
 import com.horapp.presentation.dto.response.MajorResponseDTO;
 import com.horapp.service.MajorService;
 import com.horapp.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -29,19 +28,15 @@ public class MajorServiceImpl implements MajorService {
     @Override
     public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
             Major major = new Major();
-            major.setMajorName(majorRequestDTO.getMajorName());
+            major.setMajorName(majorRequestDTO.majorName());
             major.setDeleted(false);
-            MajorResponseDTO majorResponseDTO = new MajorResponseDTO();
-            if(majorRequestDTO.getUsername() != null){
-                User user = userService.findByUsername(majorRequestDTO.getUsername());
+            if(majorRequestDTO.username() != null){
+                User user = userService.findByUsername(majorRequestDTO.username());
                 major.setUser(user);
-                majorResponseDTO.setUsername(user.getUsername());
             }
-            majorResponseDTO.setMajorName(major.getMajorName());
             List<String> courses = extractCourses(major);
-            majorResponseDTO.setCourses(courses);
             majorRepository.save(major);
-            return majorResponseDTO;
+            return getMajorResponseDTO(major);
     }
 
 
@@ -78,7 +73,6 @@ public class MajorServiceImpl implements MajorService {
         if(optionalMajor.isEmpty()){
             throw new NotFoundException("Major not found with Id = " + id);
         }
-            ModelMapper modelMapper = new ModelMapper();
             Major major = optionalMajor.get();
             major.setDeleted(true);
             majorRepository.save(major);
@@ -86,12 +80,12 @@ public class MajorServiceImpl implements MajorService {
     }
 
     private static MajorResponseDTO getMajorResponseDTO(Major major) {
-        MajorResponseDTO majorResponseDTO = new MajorResponseDTO();
-        majorResponseDTO.setIdMajor(major.getIdMajor());
-        majorResponseDTO.setMajorName(major.getMajorName());
-        majorResponseDTO.setUsername((major.getUser()!=null) ? major.getUser().getUsername() : null);
-        majorResponseDTO.setCourses(extractCourses(major));
-        return majorResponseDTO;
+        return new MajorResponseDTO(
+                major.getIdMajor(),
+                major.getMajorName(),
+                major.getUser()!=null ? major.getUser().getUsername() : null,
+                extractCourses(major)
+        );
     }
 
     private static List<String> extractCourses(Major major) {

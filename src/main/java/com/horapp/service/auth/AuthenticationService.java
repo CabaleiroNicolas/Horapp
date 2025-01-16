@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -37,18 +36,15 @@ public class AuthenticationService {
     public AuthenticationResponse login(AuthenticationRequest autRequest) {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                autRequest.getUsername(), autRequest.getPassword()
+                autRequest.username(), autRequest.password()
         );
 
         authenticationManager.authenticate(authentication);
 
-        UserDetails user = userService.findByUsername(autRequest.getUsername());
-        String jwt = jwtService.generateToken(user, generateExtraClaims((User) user));
+        User user = userService.findByUsername(autRequest.username());
+        String jwt = jwtService.generateToken(user, generateExtraClaims(user));
 
-        AuthenticationResponse authRsp = new AuthenticationResponse();
-        authRsp.setJwt(jwt);
-
-        return authRsp;
+        return new AuthenticationResponse(jwt);
     }
 
 

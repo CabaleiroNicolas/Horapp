@@ -1,4 +1,4 @@
-package com.horapp.presentation.dto.response;
+package com.horapp.presentation.dto.response.exception;
 
 import org.springframework.http.HttpStatus;
 

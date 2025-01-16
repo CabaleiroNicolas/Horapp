@@ -13,7 +13,7 @@ public interface TimeTableService {
 
     TimeTable findEntityById(Long id);
 
-    TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO);
+    //TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO);
 
     String deleteById(Long id);
 }

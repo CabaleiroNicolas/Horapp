@@ -7,7 +7,6 @@ import com.horapp.presentation.dto.request.ScheduleRequestDTO;
 import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 import com.horapp.service.CourseService;
 import com.horapp.service.ScheduleService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -27,12 +26,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResponseDTO> findAll() {
-        ModelMapper modelMapper = new ModelMapper();
         return scheduleRepository.findAll().stream()
-                .map(schedule -> {
-                            return getScheduleResponseDTO(schedule, modelMapper);
-                }
-                )
+                .map(this::getScheduleResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -43,9 +38,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         if(optionalSchedule.isEmpty()){
             throw new NotFoundException("Schedule not found with Id = " + id);
         }
-            ModelMapper modelMapper = new ModelMapper();
-            Schedule schedule = optionalSchedule.get();
-        return getScheduleResponseDTO(schedule, modelMapper);
+        return getScheduleResponseDTO(optionalSchedule.get());
     }
 
     @Override
@@ -56,25 +49,25 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         return optionalSchedule.get();
     }
+
     @Override
     public ScheduleResponseDTO save(ScheduleRequestDTO scheduleRequestDTO) {
-            Course course = courseService.findEntityById(scheduleRequestDTO.getIdCourse());
-            ModelMapper modelMapper = new ModelMapper();
+            Course course = courseService.findEntityById(scheduleRequestDTO.idCourse());
             Schedule schedule = new Schedule();
             schedule.setCourse(course);
-            schedule.setCourseGroup(scheduleRequestDTO.getCourseGroup());
+            schedule.setCourseGroup(scheduleRequestDTO.courseGroup());
             scheduleRepository.save(schedule);
-            return modelMapper.map(schedule, ScheduleResponseDTO.class);
+            return getScheduleResponseDTO(schedule);
 
     }
+    private ScheduleResponseDTO getScheduleResponseDTO(Schedule schedule) {
 
-
-    private static ScheduleResponseDTO getScheduleResponseDTO(Schedule schedule, ModelMapper modelMapper) {
-        ScheduleResponseDTO scheduleResponseDTO = modelMapper.map(schedule, ScheduleResponseDTO.class);
-        List<String> days = schedule.getDaysAndTimes().stream()
+        List<String> days = schedule.getDaysAndTimes() != null ? schedule.getDaysAndTimes().stream()
                 .map(day -> day.getDay().toString())
-                .collect(Collectors.toList());
-        scheduleResponseDTO.setDays(days);
-        return scheduleResponseDTO;
+                .collect(Collectors.toList()) : null;
+
+        return new ScheduleResponseDTO(schedule.getIdSchedule(),
+                schedule.getCourseGroup(),
+                days);
     }
 }

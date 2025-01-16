@@ -7,7 +7,6 @@ import com.horapp.presentation.dto.request.UserRequestDTO;
 import com.horapp.presentation.dto.response.UserResponseDTO;
 import com.horapp.service.UserService;
 import com.horapp.util.Role;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,22 +26,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDTO> findAll() {
-        ModelMapper modelMapper = new ModelMapper();
         return userRepository.findByEnabledTrue().stream()
-                .map(user -> modelMapper.map(user, UserResponseDTO.class))
+                .map(this::buildUserResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserResponseDTO findById(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
-            throw new NotFoundException("User not found with Id = " + id);
-        }
-        ModelMapper modelMapper = new ModelMapper();
-        User user = optionalUser.get();
-        return modelMapper.map(user, UserResponseDTO.class);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with Id = " + id));
+        return buildUserResponseDTO(user);
     }
+
 
     @Override
     public User findEntityById(Long id) {
@@ -63,16 +58,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String save(UserRequestDTO userRequestDTO) {
-            Optional<User> optionalUser = userRepository.findByUsername(userRequestDTO.getUsername());
+            Optional<User> optionalUser = userRepository.findByUsername(userRequestDTO.username());
             if(optionalUser.isPresent()){
-                throw new UserCreationException("The user with username " + userRequestDTO.getUsername() + " is already created");
+                throw new UserCreationException("The user with username " + userRequestDTO.username() + " is already created");
             }
             User user = new User();
-            user.setUsername(userRequestDTO.getUsername());
-            user.setName(userRequestDTO.getName());
-            user.setEmail(userRequestDTO.getEmail());
-            user.setLastname(userRequestDTO.getLastname());
-            user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+            user.setUsername(userRequestDTO.username());
+            user.setName(userRequestDTO.name());
+            user.setEmail(userRequestDTO.email());
+            user.setLastname(userRequestDTO.lastname());
+            user.setPassword(passwordEncoder.encode(userRequestDTO.password()));
             user.setRole(Role.STUDENT);
             user.setEnabled(true);
             user.setAccountNonLocked(true);
@@ -90,5 +85,14 @@ public class UserServiceImpl implements UserService {
         userToDelete.setEnabled(false);
         userRepository.save(userToDelete);
         return "The User with ID " + userToDelete.getIdUser()+ " was deleted successfully";
+    }
+
+    private UserResponseDTO buildUserResponseDTO(User user) {
+        return new UserResponseDTO(
+                user.getIdUser(),
+                user.getUsername(),
+                user.getName(),
+                user.getLastname(),
+                user.getEmail());
     }
 }

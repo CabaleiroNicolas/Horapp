@@ -5,7 +5,6 @@ import com.horapp.persistence.repository.CategoryRepository;
 import com.horapp.presentation.dto.request.CategoryRequestDTO;
 import com.horapp.presentation.dto.response.CategoryResponseDTO;
 import com.horapp.service.CategoryService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -24,16 +23,19 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
         Category category = new Category();
-        ModelMapper modelMapper = new ModelMapper();
-        category.setCategoryName(categoryRequestDTO.getCategoryName());
-        category.setDescriptionName(categoryRequestDTO.getDescriptionName());
+        category.setCategoryName(categoryRequestDTO.categoryName());
+        category.setDescriptionName(categoryRequestDTO.descriptionName());
         categoryRepository.save(category);
-        return modelMapper.map(category, CategoryResponseDTO.class);
+
+        return new CategoryResponseDTO(
+                category.getIdCategory(),
+                category.getCategoryName(),
+                category.getDescriptionName()
+        );
     }
 
     @Override
     public List<CategoryResponseDTO> findAll() {
-        ModelMapper modelMapper = new ModelMapper();
         return categoryRepository.findByDeletedFalse().stream()
                 .map(CategoryServiceImpl::getCategoryResponseDTO)
                 .collect(Collectors.toList());
@@ -43,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDTO findById(Long id) {
         Optional<Category> category = categoryRepository.findById(id);
-        if(!category.isPresent()){
+        if(category.isEmpty()){
             throw new NotFoundException("Category not found with Id = " + id);
         }
         Category categoryFind = category.get();
@@ -56,9 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(category.isEmpty()){
             throw new NotFoundException("Category not found with Id = " + id);
         }
-            ModelMapper modelMapper = new ModelMapper();
-            Category categoryFind = category.get();
-            return categoryFind;
+        return category.get();
     }
 
 
@@ -75,10 +75,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private static CategoryResponseDTO getCategoryResponseDTO(Category category) {
-        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
-        categoryResponseDTO.setCategoryName(category.getCategoryName());
-        categoryResponseDTO.setDescriptionName(category.getDescriptionName());
-        categoryResponseDTO.setIdCategory(category.getIdCategory());
-        return categoryResponseDTO;
+        return new CategoryResponseDTO(
+                category.getIdCategory(),
+                category.getCategoryName(),
+                category.getDescriptionName()
+        );
     }
 }

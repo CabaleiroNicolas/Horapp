@@ -57,33 +57,29 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course findEntityById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findById(id);
-        if(!optionalCourse.isPresent()){
+        if(optionalCourse.isEmpty()){
             throw new NotFoundException("Course not found with Id = " + id);
         }
         return optionalCourse.get();
     }
 
     @Override
-    public CourseResponseDTO save(CourseRequestDTO courseRequestDTO) {
-        Major major = majorService.findEntityById(courseRequestDTO.getMajorId());
+    public String save(CourseRequestDTO courseRequestDTO) {
+        Major major = majorService.findEntityById(courseRequestDTO.majorId());
         Course course = new Course();
-        CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
-        if(courseRequestDTO.getUserId()!= null){
-            User user = userService.findEntityById(courseRequestDTO.getUserId());
+        if(courseRequestDTO.userId()!= null){
+            User user = userService.findEntityById(courseRequestDTO.userId());
             course.setUser(user);
-            courseResponseDTO.setUsername(user.getUsername());
         }
-        if(courseRequestDTO.getTableId() != null){
-            TimeTable timeTable = timeTableService.findEntityById(courseRequestDTO.getTableId());
+        if(courseRequestDTO.tableId() != null){
+            TimeTable timeTable = timeTableService.findEntityById(courseRequestDTO.tableId());
             course.setTimeTable(timeTable);
-            courseResponseDTO.setTableId(timeTable.getIdTimeTable());
+
         }
-        course.setCourseName(courseRequestDTO.getCourseName());
+        course.setCourseName(courseRequestDTO.courseName());
         course.setMajor(major);
         courseRepository.save(course);
-        courseResponseDTO.setCourseName(course.getCourseName());
-        courseResponseDTO.setMajorName(major.getMajorName());
-        return courseResponseDTO;
+        return "Course created successfully";
     }
 
     @Override
@@ -97,21 +93,19 @@ public class CourseServiceImpl implements CourseService {
             courseRepository.save(courseToDelete);
             return "The course with ID " + courseToDelete.getIdCourse()+ " was deleted successfully";
     }
+
     private static CourseResponseDTO getCourseResponseDTO(Course course) {
-        CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
-        if(course.getUser()!= null){
-            courseResponseDTO.setUsername(course.getUser().getUsername());
-        }
-        if(course.getTimeTable() != null){
-            courseResponseDTO.setTableId(course.getTimeTable().getIdTimeTable());
-        }
-        courseResponseDTO.setCourseName(course.getCourseName());
-        courseResponseDTO.setMajorName(course.getMajor().getMajorName());
-        courseResponseDTO.setIdCourse(course.getIdCourse());
         List<String> schedules = course.getScheduleList().stream()
                 .map(Schedule::getCourseGroup)
                 .collect(Collectors.toList());
-        courseResponseDTO.setSchedules(schedules);
-        return courseResponseDTO;
+
+        return new CourseResponseDTO(
+                course.getIdCourse(),
+                course.getCourseName(),
+                course.getMajor().getMajorName(),
+                course.getUser()!= null ? course.getUser().getUsername() : null,
+                course.getTimeTable() != null ? course.getTimeTable().getIdTimeTable() : null,
+                schedules
+        );
     }
 }

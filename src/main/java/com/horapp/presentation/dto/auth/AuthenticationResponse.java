@@ -2,14 +2,6 @@ package com.horapp.presentation.dto.auth;
 
 import java.io.Serializable;
 
-public class AuthenticationResponse implements Serializable {
-    private String jwt;
+public record AuthenticationResponse(String jwt) implements Serializable {
 
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
 }

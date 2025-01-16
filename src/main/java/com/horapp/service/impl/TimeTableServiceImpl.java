@@ -2,9 +2,7 @@ package com.horapp.service.impl;
 
 import com.horapp.persistence.entity.Course;
 import com.horapp.persistence.entity.TimeTable;
-import com.horapp.persistence.entity.User;
 import com.horapp.persistence.repository.TimeTableRepository;
-import com.horapp.presentation.dto.request.TimeTableRequestDTO;
 import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 import com.horapp.service.TimeTableService;
 import com.horapp.service.UserService;
@@ -50,16 +48,16 @@ public class TimeTableServiceImpl implements TimeTableService {
     }
 
 
-    @Override
-    public TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO) {
-            User user = userService.findByUsername(timeTableRequestDTO.getUsername());
-            TimeTable timeTable = new TimeTable();
-            timeTable.setUser(user);
-            TimeTableResponseDTO timeTableResponseDTO = new TimeTableResponseDTO();
-            timeTableRepository.save(timeTable);
-            timeTableResponseDTO.setUsername(user.getUsername());
-            return timeTableResponseDTO;
-    }
+//    @Override
+//    public TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO) {
+//            User user = userService.findByUsername(timeTableRequestDTO.getUsername());
+//            TimeTable timeTable = new TimeTable();
+//            timeTable.setUser(user);
+//            TimeTableResponseDTO timeTableResponseDTO = new TimeTableResponseDTO();
+//            timeTableRepository.save(timeTable);
+//            timeTableResponseDTO.username(user.getUsername());
+//            return timeTableResponseDTO;
+//    }
 
     @Override
     public String deleteById(Long id) {
@@ -74,12 +72,8 @@ public class TimeTableServiceImpl implements TimeTableService {
     }
 
     private static TimeTableResponseDTO getTimeTableResponseDTO(TimeTable timeTable) {
-        TimeTableResponseDTO timeTableResponseDTO = new TimeTableResponseDTO();
-        timeTableResponseDTO.setUsername(timeTable.getUser().getUsername());
-        timeTableResponseDTO.setId(timeTable.getIdTimeTable());
         List<String> courses = timeTable.getCourseList().stream().map(Course::getCourseName).collect(Collectors.toList());
-        timeTableResponseDTO.setCourses(courses);
-        return timeTableResponseDTO;
+        return new TimeTableResponseDTO(timeTable.getIdTimeTable(), timeTable.getUser().getUsername(), courses);
     }
 
 }

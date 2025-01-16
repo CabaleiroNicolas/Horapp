@@ -10,7 +10,6 @@ import com.horapp.presentation.dto.response.FeedbackResponseDTO;
 import com.horapp.service.CategoryService;
 import com.horapp.service.CourseService;
 import com.horapp.service.FeedbackService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -36,13 +35,12 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackResponseDTO save(FeedbackRequestDTO feedbackRequestDTO) {
             Feedback feedback = new Feedback();
-            ModelMapper modelMapper = new ModelMapper();
-            feedback.setDescriptionName(feedbackRequestDTO.getDescriptionName());
+            feedback.setDescriptionName(feedbackRequestDTO.descriptionName());
             feedback.setCategoryList(new ArrayList<>());
-            feedbackRequestDTO.getCategoryId().forEach(categoryId -> {
-                Category category = categoryService.findEntityById(categoryId); // Lanza CategoryNotFoundException
-                if (feedbackRequestDTO.getCourseId() != null) {
-                    Course course = courseService.findEntityById(feedbackRequestDTO.getCourseId());
+            feedbackRequestDTO.categoryId().forEach(categoryId -> {
+                Category category = categoryService.findEntityById(categoryId);
+                if (feedbackRequestDTO.courseId() != null) {
+                    Course course = courseService.findEntityById(feedbackRequestDTO.courseId());
                     feedback.setCourse(course);
                 }
                 feedback.getCategoryList().add(category);
@@ -50,23 +48,14 @@ public class FeedbackServiceImpl implements FeedbackService {
 
             feedbackRepository.save(feedback);
 
-            FeedbackResponseDTO feedbackResponseDTO = getFeedbackResponseDTO(feedback, modelMapper);
-
-            if (feedbackRequestDTO.getCourseId() != null) {
-                feedbackResponseDTO.setCourse(feedback.getCourse().getCourseName());
-            }
-            return feedbackResponseDTO;
+            return buildFeedbackResponseDTO(feedback);
 
     }
 
     @Override
     public List<FeedbackResponseDTO> findAll() {
-        ModelMapper modelMapper = new ModelMapper();
         return feedbackRepository.findAll().stream()
-                .map(feedback -> {
-                    FeedbackResponseDTO feedbackResponseDTO = getFeedbackResponseDTO(feedback, modelMapper);
-                    return feedbackResponseDTO;
-                })
+                .map(this::buildFeedbackResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -77,22 +66,22 @@ public class FeedbackServiceImpl implements FeedbackService {
         if(optionalFeedback.isEmpty()){
             throw new NotFoundException("Feedback not found with Id = " + id);
         }
-            ModelMapper modelMapper = new ModelMapper();
             Feedback feedbackFind = optionalFeedback.get();
-            FeedbackResponseDTO feedbackResponseDTO = modelMapper.map(feedbackFind, FeedbackResponseDTO.class);
-            List<String> categories = feedbackFind.getCategoryList().stream()
-                    .map(Category::getCategoryName)
-                    .toList();
-            feedbackResponseDTO.setCategories(categories);
-            return feedbackResponseDTO;
+        return buildFeedbackResponseDTO(feedbackFind);
     }
 
-    private static FeedbackResponseDTO getFeedbackResponseDTO(Feedback feedback, ModelMapper modelMapper) {
-        FeedbackResponseDTO feedbackResponseDTO = modelMapper.map(feedback, FeedbackResponseDTO.class);
+    private FeedbackResponseDTO buildFeedbackResponseDTO(Feedback feedback) {
         List<String> categoryNames = feedback.getCategoryList().stream()
                 .map(Category::getCategoryName)
                 .collect(Collectors.toList());
-        feedbackResponseDTO.setCategories(categoryNames);
-        return feedbackResponseDTO;
+
+        String courseName = feedback.getCourse() != null ? feedback.getCourse().getCourseName() : null;
+
+        return new FeedbackResponseDTO(
+                feedback.getIdFeedback(),
+                feedback.getDescriptionName(),
+                categoryNames,
+                courseName
+        );
     }
 }

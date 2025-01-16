@@ -47,11 +47,11 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
     @Override
     public DayAndTimeResponseDTO save(DayAndTimeRequestDTO dayAndTimeRequestDTO) {
 
-        Schedule schedule = scheduleService.findEntityById(dayAndTimeRequestDTO.getIdSchedule());
+        Schedule schedule = scheduleService.findEntityById(dayAndTimeRequestDTO.idSchedule());
         DayAndTime dayAndTime = new DayAndTime();
-        dayAndTime.setDay(DayOfWeek.valueOf(dayAndTimeRequestDTO.getDay().toUpperCase()));
-        dayAndTime.setStartTime(LocalTime.parse(dayAndTimeRequestDTO.getStartTime(), DateTimeFormatter.ofPattern("HH:mm")));
-        dayAndTime.setEndTime(LocalTime.parse(dayAndTimeRequestDTO.getEndTime(), DateTimeFormatter.ofPattern("HH:mm")));
+        dayAndTime.setDay(DayOfWeek.valueOf(dayAndTimeRequestDTO.day().toUpperCase()));
+        dayAndTime.setStartTime(LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")));
+        dayAndTime.setEndTime(LocalTime.parse(dayAndTimeRequestDTO.endTime(), DateTimeFormatter.ofPattern("HH:mm")));
         dayAndTime.setSchedule(schedule);
         dayAndTimeRepository.save(dayAndTime);
         return convertToResponseDTO(dayAndTime);
@@ -59,12 +59,8 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
     private DayAndTimeResponseDTO convertToResponseDTO(DayAndTime dayAndTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        DayAndTimeResponseDTO dto = new DayAndTimeResponseDTO();
-        dto.setIdDayAndTime(dayAndTime.getIdDayAndTime());
-        dto.setDay(dayAndTime.getDay().toString());
-        dto.setTime(dayAndTime.getStartTime().format(formatter)
+        return new DayAndTimeResponseDTO(dayAndTime.getIdDayAndTime(), dayAndTime.getDay().toString(), dayAndTime.getStartTime().format(formatter)
                 + " - "
                 + dayAndTime.getEndTime().format(formatter));
-        return dto;
     }
 }
