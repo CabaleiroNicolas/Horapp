@@ -31,6 +31,15 @@ public class Schedule {
     public Schedule() {
     }
 
+    public Schedule(long idSchedule) {
+        this.idSchedule = idSchedule;
+    }
+
+    public Schedule(String courseGroup, Course course) {
+        this.courseGroup = courseGroup;
+        this.course = course;
+    }
+
     public long getIdSchedule() {
         return idSchedule;
     }

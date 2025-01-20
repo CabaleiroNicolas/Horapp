@@ -1,10 +1,10 @@
 package com.horapp.config.security;
 
-import com.horapp.exception.user.UserNotFoundException;
-import com.horapp.persistence.repository.UserRepository;
+import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,7 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityBeansInjector {
 
     @Autowired
-    private UserRepository userRepository;
+    @Lazy
+    private UserService userService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -41,9 +42,7 @@ public class SecurityBeansInjector {
     @Bean
     public UserDetailsService userDetailsService(){
         return (username) -> {
-            //Llamar a un servicio de use y no al repo directamente
-            return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UserNotFoundException(username));
+            return userService.findByUsername(username);
         };
     }
 }

@@ -10,7 +10,6 @@ public interface CourseService {
     List<CourseResponseDTO> findAll();
     List<Course> findAllByIdList(List<Long> idList);
     CourseResponseDTO findById(Long id);
-    Course findEntityById(Long id);
-    CourseResponseDTO save(CourseRequestDTO courseRequestDTO);
+    String save(CourseRequestDTO courseRequestDTO);
     String deleteById(Long id);
 }

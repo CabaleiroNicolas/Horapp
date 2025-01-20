@@ -28,6 +28,13 @@ public class DayAndTime {
     public DayAndTime() {
     }
 
+    public DayAndTime(DayOfWeek day, LocalTime endTime, Schedule schedule, LocalTime startTime) {
+        this.day = day;
+        this.endTime = endTime;
+        this.schedule = schedule;
+        this.startTime = startTime;
+    }
+
     public DayAndTime(long idDayAndTime, DayOfWeek day, LocalTime startTime, LocalTime endTime, Schedule schedule) {
         this.idDayAndTime = idDayAndTime;
         this.day = day;

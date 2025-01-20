@@ -29,6 +29,12 @@ public class Feedback {
     public Feedback() {
     }
 
+    public Feedback(List<Category> categoryList, Course course, String descriptionName) {
+        this.categoryList = categoryList;
+        this.course = course;
+        this.descriptionName = descriptionName;
+    }
+
     public Feedback(long idFeedback, String descriptionName, List<Category> categoryList, Course course) {
         this.idFeedback = idFeedback;
         this.descriptionName = descriptionName;

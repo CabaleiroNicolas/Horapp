@@ -11,9 +11,7 @@ public interface TimeTableService {
 
     TimeTableResponseDTO findById(Long id);
 
-    TimeTable findEntityById(Long id);
-
-    TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO);
+    //TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO);
 
     String deleteById(Long id);
 }

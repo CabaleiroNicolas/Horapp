@@ -16,8 +16,7 @@ public class Major {
 
     private boolean deleted;
 
-    //Revisar relacion onetoone?
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
 
@@ -25,6 +24,16 @@ public class Major {
     private List<Course> courseList;
 
     public Major() {
+    }
+
+    public Major(String majorName, boolean deleted, User user) {
+        this.majorName = majorName;
+        this.deleted = deleted;
+        this.user = user;
+    }
+
+    public Major(long idMajor) {
+        this.idMajor = idMajor;
     }
 
     public Major(long idMajor, String majorName, boolean deleted, User user, List<Course> courseList) {

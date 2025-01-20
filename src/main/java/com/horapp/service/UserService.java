@@ -11,8 +11,6 @@ public interface UserService {
 
     UserResponseDTO findById(Long id);
 
-    User findEntityById(Long id);
-
     User findByUsername(String username);
 
     String save(UserRequestDTO userRequestDTO);

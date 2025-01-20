@@ -1,13 +1,10 @@
 package com.horapp.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "categories_fb")
 public class Category {
     @Id
@@ -23,6 +20,19 @@ public class Category {
 
     @ManyToMany(mappedBy = "categoryList")
     private List<Feedback> feedbackList;
+
+    public Category() {
+    }
+
+    public Category(long idCategory) {
+        this.idCategory = idCategory;
+    }
+
+    public Category(String categoryName, String descriptionName) {
+        this.categoryName = categoryName;
+        this.descriptionName = descriptionName;
+    }
+
 
     public long getIdCategory() {
         return idCategory;

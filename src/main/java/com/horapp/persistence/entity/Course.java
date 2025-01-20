@@ -37,6 +37,17 @@ public class Course {
     public Course() {
     }
 
+    public Course(long idCourse) {
+        this.idCourse = idCourse;
+    }
+
+    public Course(String courseName, Major major, TimeTable timeTable, User user) {
+        this.courseName = courseName;
+        this.major = major;
+        this.timeTable = timeTable;
+        this.user = user;
+    }
+
     public Course(long idCourse, String courseName, List<Schedule> scheduleList, User user, TimeTable timeTable, Major major, List<Feedback> feedbacks) {
         this.idCourse = idCourse;
         this.courseName = courseName;
