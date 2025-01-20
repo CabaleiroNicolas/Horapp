@@ -24,6 +24,15 @@ public class Category {
     @ManyToMany(mappedBy = "categoryList")
     private List<Feedback> feedbackList;
 
+    public Category(long idCategory) {
+        this.idCategory = idCategory;
+    }
+
+    public Category(String categoryName, String descriptionName) {
+        this.categoryName = categoryName;
+        this.descriptionName = descriptionName;
+    }
+
     public long getIdCategory() {
         return idCategory;
     }

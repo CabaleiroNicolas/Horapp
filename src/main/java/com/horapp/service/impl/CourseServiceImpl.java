@@ -54,30 +54,16 @@ public class CourseServiceImpl implements CourseService {
         return getCourseResponseDTO(course);
     }
 
-    @Override
-    public Course findEntityById(Long id) {
-        Optional<Course> optionalCourse = courseRepository.findById(id);
-        if(optionalCourse.isEmpty()){
-            throw new NotFoundException("Course not found with Id = " + id);
-        }
-        return optionalCourse.get();
-    }
 
     @Override
     public String save(CourseRequestDTO courseRequestDTO) {
-        Major major = majorService.findEntityById(courseRequestDTO.majorId());
-        Course course = new Course();
-        if(courseRequestDTO.userId()!= null){
-            User user = userService.findEntityById(courseRequestDTO.userId());
-            course.setUser(user);
-        }
-        if(courseRequestDTO.tableId() != null){
-            TimeTable timeTable = timeTableService.findEntityById(courseRequestDTO.tableId());
-            course.setTimeTable(timeTable);
-
-        }
-        course.setCourseName(courseRequestDTO.courseName());
-        course.setMajor(major);
+        Major major = new Major(courseRequestDTO.majorId());
+        Course course = new Course(
+                courseRequestDTO.courseName(),
+                major,
+                courseRequestDTO.userId()!= null ? new TimeTable(courseRequestDTO.tableId()) : null,
+                courseRequestDTO.userId()!= null ? new User (courseRequestDTO.userId()) : null
+        );
         courseRepository.save(course);
         return "Course created successfully";
     }

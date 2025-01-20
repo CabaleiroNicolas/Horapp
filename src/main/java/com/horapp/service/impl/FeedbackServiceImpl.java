@@ -34,18 +34,16 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackResponseDTO save(FeedbackRequestDTO feedbackRequestDTO) {
-            Feedback feedback = new Feedback();
-            feedback.setDescriptionName(feedbackRequestDTO.descriptionName());
-            feedback.setCategoryList(new ArrayList<>());
+            List<Category> categoryList = new ArrayList<>();
             feedbackRequestDTO.categoryId().forEach(categoryId -> {
-                Category category = categoryService.findEntityById(categoryId);
-                if (feedbackRequestDTO.courseId() != null) {
-                    Course course = courseService.findEntityById(feedbackRequestDTO.courseId());
-                    feedback.setCourse(course);
-                }
-                feedback.getCategoryList().add(category);
+                Category category = new Category(categoryId);
+                categoryList.add(category);
             });
-
+            Feedback feedback = new Feedback(
+                    categoryList,
+                    feedbackRequestDTO.courseId() != null ? new Course(feedbackRequestDTO.courseId()) : null,
+                    feedbackRequestDTO.descriptionName()
+                    );
             feedbackRepository.save(feedback);
 
             return buildFeedbackResponseDTO(feedback);

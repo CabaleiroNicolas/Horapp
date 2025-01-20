@@ -22,9 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
-        Category category = new Category();
-        category.setCategoryName(categoryRequestDTO.categoryName());
-        category.setDescriptionName(categoryRequestDTO.descriptionName());
+        Category category = new Category(categoryRequestDTO.categoryName(), categoryRequestDTO.descriptionName());
         categoryRepository.save(category);
 
         return new CategoryResponseDTO(
@@ -50,15 +48,6 @@ public class CategoryServiceImpl implements CategoryService {
         }
         Category categoryFind = category.get();
         return getCategoryResponseDTO(categoryFind);
-    }
-
-    @Override
-    public Category findEntityById(Long id) {
-        Optional<Category> category = categoryRepository.findById(id);
-        if(category.isEmpty()){
-            throw new NotFoundException("Category not found with Id = " + id);
-        }
-        return category.get();
     }
 
 

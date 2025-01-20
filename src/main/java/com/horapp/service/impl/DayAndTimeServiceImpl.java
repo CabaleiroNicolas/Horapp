@@ -46,13 +46,11 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
     @Override
     public DayAndTimeResponseDTO save(DayAndTimeRequestDTO dayAndTimeRequestDTO) {
-
-        Schedule schedule = scheduleService.findEntityById(dayAndTimeRequestDTO.idSchedule());
-        DayAndTime dayAndTime = new DayAndTime();
-        dayAndTime.setDay(DayOfWeek.valueOf(dayAndTimeRequestDTO.day().toUpperCase()));
-        dayAndTime.setStartTime(LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")));
-        dayAndTime.setEndTime(LocalTime.parse(dayAndTimeRequestDTO.endTime(), DateTimeFormatter.ofPattern("HH:mm")));
-        dayAndTime.setSchedule(schedule);
+        DayAndTime dayAndTime = new DayAndTime(
+                DayOfWeek.valueOf(dayAndTimeRequestDTO.day().toUpperCase()),
+                LocalTime.parse(dayAndTimeRequestDTO.endTime(), DateTimeFormatter.ofPattern("HH:mm")),
+                new Schedule(dayAndTimeRequestDTO.idSchedule()),
+                LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")));
         dayAndTimeRepository.save(dayAndTime);
         return convertToResponseDTO(dayAndTime);
     }

@@ -38,15 +38,6 @@ public class UserServiceImpl implements UserService {
         return buildUserResponseDTO(user);
     }
 
-
-    @Override
-    public User findEntityById(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
-            throw new NotFoundException("User not found with Id = " + id);
-        }
-        return optionalUser.get();
-    }
     @Override
     public User findByUsername(String username){
         Optional<User> optionalUser = userRepository.findByUsername(username);
@@ -62,15 +53,15 @@ public class UserServiceImpl implements UserService {
             if(optionalUser.isPresent()){
                 throw new UserCreationException("The user with username " + userRequestDTO.username() + " is already created");
             }
-            User user = new User();
-            user.setUsername(userRequestDTO.username());
-            user.setName(userRequestDTO.name());
-            user.setEmail(userRequestDTO.email());
-            user.setLastname(userRequestDTO.lastname());
-            user.setPassword(passwordEncoder.encode(userRequestDTO.password()));
-            user.setRole(Role.STUDENT);
-            user.setEnabled(true);
-            user.setAccountNonLocked(true);
+            User user = new User(
+                    true,
+                    userRequestDTO.email() ,
+                    true,
+                    userRequestDTO.lastname(),
+                    userRequestDTO.name(),
+                    passwordEncoder.encode(userRequestDTO.password()),
+                    Role.STUDENT,
+                    userRequestDTO.username());
             userRepository.save(user);
             return "The user was created successfully";
     }

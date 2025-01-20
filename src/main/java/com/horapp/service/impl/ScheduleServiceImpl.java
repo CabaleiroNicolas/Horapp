@@ -41,25 +41,15 @@ public class ScheduleServiceImpl implements ScheduleService {
         return getScheduleResponseDTO(optionalSchedule.get());
     }
 
-    @Override
-    public Schedule findEntityById(Long id) {
-        Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
-        if(optionalSchedule.isEmpty()){
-            throw new NotFoundException("Schedule not found with Id = " + id);
-        }
-        return optionalSchedule.get();
-    }
 
     @Override
     public ScheduleResponseDTO save(ScheduleRequestDTO scheduleRequestDTO) {
-            Course course = courseService.findEntityById(scheduleRequestDTO.idCourse());
-            Schedule schedule = new Schedule();
-            schedule.setCourse(course);
-            schedule.setCourseGroup(scheduleRequestDTO.courseGroup());
+            Course course = new Course(scheduleRequestDTO.idCourse());
+            Schedule schedule = new Schedule(scheduleRequestDTO.courseGroup(), course);
             scheduleRepository.save(schedule);
             return getScheduleResponseDTO(schedule);
-
     }
+
     private ScheduleResponseDTO getScheduleResponseDTO(Schedule schedule) {
 
         List<String> days = schedule.getDaysAndTimes() != null ? schedule.getDaysAndTimes().stream()

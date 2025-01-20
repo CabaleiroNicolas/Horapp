@@ -30,6 +30,10 @@ public class TimeTable {
         this.courseList = courseList;
     }
 
+    public TimeTable(long idTimeTable) {
+        this.idTimeTable = idTimeTable;
+    }
+
     public long getIdTimeTable() {
         return idTimeTable;
     }

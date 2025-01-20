@@ -27,14 +27,11 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
-            Major major = new Major();
-            major.setMajorName(majorRequestDTO.majorName());
-            major.setDeleted(false);
-            if(majorRequestDTO.username() != null){
-                User user = userService.findByUsername(majorRequestDTO.username());
-                major.setUser(user);
-            }
-            List<String> courses = extractCourses(major);
+            Major major = new Major(
+                    majorRequestDTO.majorName(),
+                    false,
+                    majorRequestDTO.username() != null ? new User(majorRequestDTO.username()) : null
+                    );
             majorRepository.save(major);
             return getMajorResponseDTO(major);
     }
@@ -57,15 +54,6 @@ public class MajorServiceImpl implements MajorService {
             return getMajorResponseDTO(major);
         }
 
-
-    @Override
-    public Major findEntityById(Long id) {
-        Optional<Major> optionalMajor = majorRepository.findById(id);
-        if(optionalMajor.isEmpty()){
-            throw new NotFoundException("Major not found with Id = " + id);
-        }
-        return  optionalMajor.get();
-    }
 
     @Override
     public String deleteById(Long id) {

@@ -29,8 +29,8 @@ public class User implements UserDetails {
     private String email;
 
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "user")
-    private Major major;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Major> majorList;
 
     @OneToMany(mappedBy = "user")
     private List<Course> coursesList;
@@ -44,15 +44,24 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(long idUser, String username, String name, String lastname, String email, Major major, List<Course> coursesList, List<TimeTable> timeTablesList) {
-        this.idUser = idUser;
-        this.username = username;
-        this.name = name;
-        this.lastname = lastname;
+
+    public User(boolean accountNonLocked, String email, boolean enabled, String lastname, String name, String password, Role role, String username) {
+        this.accountNonLocked = accountNonLocked;
         this.email = email;
-        this.major = major;
-        this.coursesList = coursesList;
-        this.timeTablesList = timeTablesList;
+        this.enabled = enabled;
+        this.lastname = lastname;
+        this.name = name;
+        this.password = password;
+        this.role = role;
+        this.username = username;
+    }
+
+    public User(long idUser) {
+        this.idUser = idUser;
+    }
+
+    public User(String username) {
+        this.username = username;
     }
 
     public long getIdUser() {
@@ -136,12 +145,12 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public Major getMajor() {
-        return major;
+    public List<Major> getMajorList() {
+        return majorList;
     }
 
-    public void setMajor(Major major) {
-        this.major = major;
+    public void setMajorList(List<Major> majorList) {
+        this.majorList = majorList;
     }
 
     public List<Course> getCoursesList() {

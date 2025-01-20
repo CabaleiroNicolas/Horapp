@@ -38,15 +38,6 @@ public class TimeTableServiceImpl implements TimeTableService {
         return getTimeTableResponseDTO(optionalTimeTable.get());
     }
 
-    @Override
-    public TimeTable findEntityById(Long id) {
-        Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
-        if(optionalTimeTable.isEmpty()){
-            throw new NotFoundException("TimeTable not found with Id = " + id);
-        }
-        return optionalTimeTable.get();
-    }
-
 
 //    @Override
 //    public TimeTableResponseDTO save(TimeTableRequestDTO timeTableRequestDTO) {

@@ -1,6 +1,5 @@
 package com.horapp.service;
 
-import com.horapp.persistence.entity.Schedule;
 import com.horapp.presentation.dto.request.ScheduleRequestDTO;
 import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 
@@ -13,5 +12,4 @@ public interface ScheduleService {
 
     ScheduleResponseDTO  save(ScheduleRequestDTO scheduleRequestDTO);
 
-    Schedule findEntityById(Long idSchedule);
 }
