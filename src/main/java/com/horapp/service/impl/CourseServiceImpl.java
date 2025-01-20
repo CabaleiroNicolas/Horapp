@@ -57,11 +57,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public String save(CourseRequestDTO courseRequestDTO) {
-        Major major = new Major(courseRequestDTO.majorId());
         Course course = new Course(
                 courseRequestDTO.courseName(),
-                major,
-                courseRequestDTO.userId()!= null ? new TimeTable(courseRequestDTO.tableId()) : null,
+                new Major(courseRequestDTO.majorId()),
+                courseRequestDTO.tableId()!= null ? new TimeTable(courseRequestDTO.tableId()) : null,
                 courseRequestDTO.userId()!= null ? new User (courseRequestDTO.userId()) : null
         );
         courseRepository.save(course);
