@@ -4,7 +4,6 @@ import com.horapp.presentation.dto.request.DayAndTimeRequestDTO;
 import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 import com.horapp.service.DayAndTimeService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,12 @@ import java.util.List;
 @RequestMapping("/daysAndTimes")
 public class DayAndTimeController {
 
-    @Autowired
-    private DayAndTimeService dayAndTimeService;
+
+    private final DayAndTimeService dayAndTimeService;
+
+    public DayAndTimeController(DayAndTimeService dayAndTimeService) {
+        this.dayAndTimeService = dayAndTimeService;
+    }
 
     @GetMapping
     public ResponseEntity<List<DayAndTimeResponseDTO>> findAll(){

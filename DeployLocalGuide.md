@@ -19,7 +19,7 @@ Sigue estos pasos para levantar el entorno de desarrollo:
    **opcional levantar pgadmin**
 
    ```bash
-    docker-compose up -d pgadmin
+    docker-compose up -d pgadmin_service
     ```
 
 
@@ -43,12 +43,4 @@ Sigue estos pasos para levantar el entorno de desarrollo:
 
 Como alternativa, puedes repetir el paso 1 y correr la aplicación directamente desde tu IDE.
 
-## Base de Datos para Tests
-
-   Utiliza el siguiente comando para levantar el servicio de la base de datos para tests:
-
-   ```bash
-   docker-compose up -d postgres_test_db
-   ```
-      
    

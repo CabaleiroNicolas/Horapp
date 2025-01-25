@@ -10,13 +10,13 @@ public class TimeTable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "time_table_seq_gen")
     @SequenceGenerator(name = "time_table_seq_gen", sequenceName = "time_tables_id_seq", allocationSize = 1)
-    private long idTimeTable;
+    private Long idTimeTable;
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.EAGER,mappedBy = "timeTable")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "timeTable")
     private List<Course> courseList;
 
     private boolean deleted;

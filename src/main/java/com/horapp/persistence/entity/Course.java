@@ -10,13 +10,13 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "course_seq_gen")
     @SequenceGenerator(name = "course_seq_gen", sequenceName = "courses_id_seq", allocationSize = 1)
-    private long idCourse;
+    private Long idCourse;
 
     private String courseName;
 
-    private boolean deleted;
+    private Boolean deleted;
 
-    @OneToMany(fetch = FetchType.EAGER , mappedBy = "course")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "course")
     private List<Schedule> scheduleList;
 
     @ManyToOne
@@ -28,10 +28,10 @@ public class Course {
     private TimeTable timeTable;
 
     @ManyToOne
-    @JoinColumn(name = "id_major", nullable = false)
+    @JoinColumn(name = "id_major")
     private Major major;
 
-    @OneToMany(fetch = FetchType.EAGER ,mappedBy = "course")
+    @OneToMany(fetch = FetchType.LAZY ,mappedBy = "course")
     private List<Feedback> feedbacks;
 
     public Course() {
@@ -48,7 +48,7 @@ public class Course {
         this.user = user;
     }
 
-    public Course(long idCourse, String courseName, List<Schedule> scheduleList, User user, TimeTable timeTable, Major major, List<Feedback> feedbacks) {
+    public Course(Long idCourse, String courseName, List<Schedule> scheduleList, User user, TimeTable timeTable, Major major, List<Feedback> feedbacks) {
         this.idCourse = idCourse;
         this.courseName = courseName;
         this.scheduleList = scheduleList;
@@ -62,24 +62,12 @@ public class Course {
         return idCourse;
     }
 
-    public void setIdCourse(long idCourse) {
-        this.idCourse = idCourse;
-    }
-
     public String getCourseName() {
         return courseName;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
     public List<Schedule> getScheduleList() {
         return scheduleList;
-    }
-
-    public void setScheduleList(List<Schedule> scheduleList) {
-        this.scheduleList = scheduleList;
     }
 
     public User getUser() {
@@ -94,24 +82,12 @@ public class Course {
         return timeTable;
     }
 
-    public void setTimeTable(TimeTable timeTable) {
-        this.timeTable = timeTable;
-    }
-
     public Major getMajor() {
         return major;
     }
 
-    public void setMajor(Major major) {
-        this.major = major;
-    }
-
     public List<Feedback> getFeedbacks() {
         return feedbacks;
-    }
-
-    public void setFeedbacks(List<Feedback> feedbacks) {
-        this.feedbacks = feedbacks;
     }
 
     public boolean isDeleted() {
@@ -122,17 +98,4 @@ public class Course {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Course{" +
-                "idCourse=" + idCourse +
-                ", courseName='" + courseName + '\'' +
-                ", deleted=" + deleted +
-                ", scheduleList=" + scheduleList +
-                ", user=" + user +
-                ", timeTable=" + timeTable +
-                ", major=" + major +
-                ", feedbacks=" + feedbacks +
-                '}';
-    }
 }

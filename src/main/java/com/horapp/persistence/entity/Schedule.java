@@ -10,18 +10,18 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_seq_gen")
     @SequenceGenerator(name = "schedule_seq_gen", sequenceName = "schedules_id_seq", allocationSize = 1)
-    private long idSchedule;
+    private Long idSchedule;
 
     private String courseGroup;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private List<DayAndTime> daysAndTimes;
 
     @ManyToOne
-    @JoinColumn(name = "id_course", nullable = false)
+    @JoinColumn(name = "id_course")
     private Course course;
 
-    public Schedule(long idSchedule, String courseGroup, List<DayAndTime> daysAndTimes, Course course) {
+    public Schedule(Long idSchedule, String courseGroup, List<DayAndTime> daysAndTimes, Course course) {
         this.idSchedule = idSchedule;
         this.courseGroup = courseGroup;
         this.daysAndTimes = daysAndTimes;
@@ -31,7 +31,7 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(long idSchedule) {
+    public Schedule(Long idSchedule) {
         this.idSchedule = idSchedule;
     }
 
@@ -44,24 +44,12 @@ public class Schedule {
         return idSchedule;
     }
 
-    public void setIdSchedule(long idSchedule) {
-        this.idSchedule = idSchedule;
-    }
-
     public String getCourseGroup() {
         return courseGroup;
     }
 
-    public void setCourseGroup(String courseGroup) {
-        this.courseGroup = courseGroup;
-    }
-
     public List<DayAndTime> getDaysAndTimes() {
         return daysAndTimes;
-    }
-
-    public void setDaysAndTimes(List<DayAndTime> daysAndTimes) {
-        this.daysAndTimes = daysAndTimes;
     }
 
     public Course getCourse() {
@@ -72,12 +60,4 @@ public class Schedule {
         this.course = course;
     }
 
-    @Override
-    public String toString() {
-        return "Schedule{" +
-                "idSchedule=" + idSchedule +
-                ", courseGroup='" + courseGroup + '\'' +
-                ", daysAndTimes=" + daysAndTimes +
-                '}';
-    }
 }
