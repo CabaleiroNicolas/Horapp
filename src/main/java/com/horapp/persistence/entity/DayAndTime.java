@@ -28,7 +28,7 @@ public class DayAndTime {
     public DayAndTime() {
     }
 
-    public DayAndTime(DayOfWeek day, LocalTime endTime, Schedule schedule, LocalTime startTime) {
+    public DayAndTime(DayOfWeek day, LocalTime startTime, LocalTime endTime, Schedule schedule) {
         this.day = day;
         this.endTime = endTime;
         this.schedule = schedule;

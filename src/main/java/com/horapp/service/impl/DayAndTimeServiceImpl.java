@@ -6,9 +6,7 @@ import com.horapp.persistence.repository.DayAndTimeRepository;
 import com.horapp.presentation.dto.request.DayAndTimeRequestDTO;
 import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 import com.horapp.service.DayAndTimeService;
-import com.horapp.service.ScheduleService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.time.DayOfWeek;
@@ -52,9 +50,11 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
         DayAndTime dayAndTime = new DayAndTime(
                 DayOfWeek.valueOf(dayAndTimeRequestDTO.day().toUpperCase()),
+                LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")),
                 LocalTime.parse(dayAndTimeRequestDTO.endTime(), DateTimeFormatter.ofPattern("HH:mm")),
-                scheduleAssigned,
-                LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")));
+                scheduleAssigned
+        );
+
         dayAndTimeRepository.save(dayAndTime);
         return convertToResponseDTO(dayAndTime);
     }

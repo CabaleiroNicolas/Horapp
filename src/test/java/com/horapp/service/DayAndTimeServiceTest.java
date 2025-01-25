@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.webjars.NotFoundException;
 
 import java.time.DayOfWeek;
 
@@ -30,6 +31,8 @@ class DayAndTimeServiceTest {
     @Autowired
     DayAndTimeRepository dayAndTimeRepository;
 
+
+    //---------------------- INTEGRATION TESTS ------------------------------------
 
     @Test
     void saveTest_Successful() {
@@ -52,7 +55,25 @@ class DayAndTimeServiceTest {
 
         DayAndTimeRequestDTO dayAndTimeRequestDTO = new DayAndTimeRequestDTO(idSchedule, "MONDAY", "08:00", "17:00");
         assertThrows(DataIntegrityViolationException.class, ()->dayAndTimeService.save(dayAndTimeRequestDTO));
-
     }
+
+    @Test
+    void findById_Successful() {
+        Long idDayAndTime = 100000L;
+        DayOfWeek expectedDay = DayOfWeek.MONDAY;
+
+        DayAndTimeResponseDTO response = assertDoesNotThrow(()->dayAndTimeService.findById(idDayAndTime));
+
+        assertEquals(expectedDay, DayOfWeek.valueOf(response.day()));
+    }
+
+    @Test
+    void findById_WhenDoesNotExists() {
+        Long idDayAndTime = 1L;
+        assertThrows(NotFoundException.class ,()->dayAndTimeService.findById(idDayAndTime));
+    }
+
+    // ------------------------- UNIT TEST ---------------------------
+
 
 }
