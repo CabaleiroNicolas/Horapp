@@ -25,7 +25,6 @@ public class TimeTableController {
 
     @Autowired
     private TimeTableService timeTableService;
-
     @Autowired
     private SolverService solverService;
 
@@ -66,6 +65,7 @@ public class TimeTableController {
     public ResponseEntity<List<TimeTableResponseDTO>> findAll(){
         return  new ResponseEntity<>(timeTableService.findAll(), HttpStatus.OK);
     }
+
     @Operation(
             summary = "Obtener una TimeTable por su ID",
             description = "Devuelve una timetable"
@@ -80,27 +80,6 @@ public class TimeTableController {
         return new ResponseEntity<>(timeTableService.findById(timetableId), HttpStatus.OK);
     }
 
-//    @Operation(
-//            summary = "Crear una TimeTable sin optaplanner",
-//            description = "Se guaraa una timetable",
-//            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-//                    description = "Request body con la lista de cursos a ordenar con sus respectivas comisiones",
-//                    required = true,
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            schema = @Schema(implementation = TimeTableOptaRequestDTO.class)
-//                    )
-//            ))
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
-//            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-//            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
-//            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
-//
-//    @PostMapping
-//    public ResponseEntity<TimeTableResponseDTO> save(@Valid @RequestBody TimeTableRequestDTO timeTableRequestDTO){
-//        return new ResponseEntity<>(timeTableService.save(timeTableRequestDTO), HttpStatus.CREATED);
-//    }
 
     @Operation(
             summary = "Deshabilitar una TimeTable",

@@ -8,7 +8,6 @@ import com.horapp.service.CourseService;
 import com.horapp.service.MajorService;
 import com.horapp.service.TimeTableService;
 import com.horapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -19,17 +18,17 @@ import java.util.stream.Collectors;
 @Service
 public class CourseServiceImpl implements CourseService {
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+    private final MajorService majorService;
+    private final UserService userService;
+    private final TimeTableService timeTableService;
 
-    @Autowired
-    private MajorService majorService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private TimeTableService timeTableService;
+    public CourseServiceImpl(CourseRepository courseRepository, MajorService majorService, UserService userService, TimeTableService timeTableService) {
+        this.courseRepository = courseRepository;
+        this.majorService = majorService;
+        this.userService = userService;
+        this.timeTableService = timeTableService;
+    }
 
     @Override
     public List<CourseResponseDTO> findAll() {

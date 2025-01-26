@@ -27,12 +27,13 @@ services:
     ports:
       - "5432:5432"
 
-  pgadmin:
+
+  pgadmin_service:
     image: dpage/pgadmin4:8.7
     networks:
       - horapp-network
     restart: always
-    container_name: pgadmin4
+    container_name: pgadmin4_horapp
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@email.com
       PGADMIN_DEFAULT_PASSWORD: admin

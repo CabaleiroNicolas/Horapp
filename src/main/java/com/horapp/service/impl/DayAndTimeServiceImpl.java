@@ -6,8 +6,6 @@ import com.horapp.persistence.repository.DayAndTimeRepository;
 import com.horapp.presentation.dto.request.DayAndTimeRequestDTO;
 import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 import com.horapp.service.DayAndTimeService;
-import com.horapp.service.ScheduleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -21,11 +19,12 @@ import java.util.stream.Collectors;
 @Service
 public class DayAndTimeServiceImpl implements DayAndTimeService {
 
-    @Autowired
-    private DayAndTimeRepository dayAndTimeRepository;
+    private final DayAndTimeRepository dayAndTimeRepository;
 
-    @Autowired
-    private ScheduleService scheduleService;
+
+    public DayAndTimeServiceImpl(DayAndTimeRepository dayAndTimeRepository) {
+        this.dayAndTimeRepository = dayAndTimeRepository;
+    }
 
     @Override
     public List<DayAndTimeResponseDTO> findAll() {
@@ -46,11 +45,16 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
     @Override
     public DayAndTimeResponseDTO save(DayAndTimeRequestDTO dayAndTimeRequestDTO) {
+
+        Schedule scheduleAssigned = new Schedule(dayAndTimeRequestDTO.idSchedule());
+
         DayAndTime dayAndTime = new DayAndTime(
                 DayOfWeek.valueOf(dayAndTimeRequestDTO.day().toUpperCase()),
+                LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")),
                 LocalTime.parse(dayAndTimeRequestDTO.endTime(), DateTimeFormatter.ofPattern("HH:mm")),
-                new Schedule(dayAndTimeRequestDTO.idSchedule()),
-                LocalTime.parse(dayAndTimeRequestDTO.startTime(), DateTimeFormatter.ofPattern("HH:mm")));
+                scheduleAssigned
+        );
+
         dayAndTimeRepository.save(dayAndTime);
         return convertToResponseDTO(dayAndTime);
     }

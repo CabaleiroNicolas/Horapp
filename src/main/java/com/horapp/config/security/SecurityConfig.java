@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/authentication/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/users").permitAll();
+                    auth.requestMatchers("/daysAndTimes/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .build();
