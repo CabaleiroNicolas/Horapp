@@ -53,17 +53,19 @@ public class TimeTableController {
 
         return ResponseEntity.ok(solvedTimeTable);
     }
+
     @Operation(
-            summary = "Obtener todas las TimeTable no deshabilitadas",
+            summary = "Obtener todas las TimeTable no deshabilitadas de un determinado curso",
             description = "Devuelve todas las timetable")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TimeTableOptaResponseDTO.class))),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
-    @GetMapping
-    public ResponseEntity<List<TimeTableResponseDTO>> findAll(){
-        return  new ResponseEntity<>(timeTableService.findAll(), HttpStatus.OK);
+
+    @GetMapping("/findAll/{courseId}")
+    public ResponseEntity<List<TimeTableResponseDTO>> findAll(@PathVariable Long courseId){
+        return  new ResponseEntity<>(timeTableService.findAllByCourse(courseId), HttpStatus.OK);
     }
 
     @Operation(
