@@ -25,13 +25,6 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserResponseDTO> findAll() {
-        return userRepository.findByEnabledTrue().stream()
-                .map(this::buildUserResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public UserResponseDTO findById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with Id = " + id));

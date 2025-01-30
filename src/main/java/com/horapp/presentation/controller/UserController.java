@@ -18,10 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> findAll(){
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){

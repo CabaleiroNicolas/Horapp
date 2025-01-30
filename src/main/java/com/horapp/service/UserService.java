@@ -7,7 +7,6 @@ import com.horapp.presentation.dto.response.UserResponseDTO;
 import java.util.List;
 
 public interface UserService {
-    List<UserResponseDTO> findAll();
 
     UserResponseDTO findById(Long id);
 
