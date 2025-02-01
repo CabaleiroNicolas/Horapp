@@ -25,8 +25,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDTO> findAll() {
-        return scheduleRepository.findAll().stream()
+    public List<ScheduleResponseDTO> findAllByCourse(Long id){
+        return scheduleRepository.findAllByCourse_IdCourse(id).stream()
                 .map(this::getScheduleResponseDTO)
                 .collect(Collectors.toList());
     }
