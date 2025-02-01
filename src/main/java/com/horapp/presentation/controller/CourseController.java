@@ -18,9 +18,9 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping
-    public ResponseEntity<List<CourseResponseDTO>> findAll(){
-        return new ResponseEntity<>(courseService.findAll(), HttpStatus.OK);
+    @GetMapping("/findAll/{id}")
+    public ResponseEntity<List<CourseResponseDTO>> findAll(@PathVariable Long id){
+        return new ResponseEntity<>(courseService.findAllByMajor(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

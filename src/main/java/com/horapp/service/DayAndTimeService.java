@@ -5,6 +5,8 @@ import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 
 
 public interface DayAndTimeService {
+
+    List<DayAndTimeResponseDTO> findAllBySchedule(Long id);
     DayAndTimeResponseDTO findById(Long id);
     DayAndTimeResponseDTO save(DayAndTimeRequestDTO dayAndTimeRequestDTO);
 }

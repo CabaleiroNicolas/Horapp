@@ -20,7 +20,7 @@ public class DayAndTimeController {
     public DayAndTimeController(DayAndTimeService dayAndTimeService) {
         this.dayAndTimeService = dayAndTimeService;
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<DayAndTimeResponseDTO> findById(@PathVariable Long id){
         return new ResponseEntity<>(dayAndTimeService.findById(id), HttpStatus.OK);

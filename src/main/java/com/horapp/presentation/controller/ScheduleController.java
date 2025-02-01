@@ -18,9 +18,9 @@ public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService;
 
-    @GetMapping
-    public ResponseEntity<List<ScheduleResponseDTO>> findAll(){
-        return new ResponseEntity<>(scheduleService.findAll(), HttpStatus.OK);
+    @GetMapping("/findAll/{id}")
+    public ResponseEntity<List<ScheduleResponseDTO>> findAllByCourse(@PathVariable Long id){
+        return new ResponseEntity<>(scheduleService.findAllByCourse(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

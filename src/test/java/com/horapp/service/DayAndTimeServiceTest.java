@@ -58,7 +58,7 @@ class DayAndTimeServiceTest {
     }
 
     @Test
-    void findById_Successful() {
+    void findByIdTest_Successful() {
         Long idDayAndTime = 100000L;
         DayOfWeek expectedDay = DayOfWeek.MONDAY;
 
@@ -68,7 +68,7 @@ class DayAndTimeServiceTest {
     }
 
     @Test
-    void findById_WhenDoesNotExists() {
+    void findByIdTest_WhenDoesNotExists() {
         Long idDayAndTime = 1L;
         assertThrows(NotFoundException.class ,()->dayAndTimeService.findById(idDayAndTime));
     }

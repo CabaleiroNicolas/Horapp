@@ -25,7 +25,14 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
     public DayAndTimeServiceImpl(DayAndTimeRepository dayAndTimeRepository) {
         this.dayAndTimeRepository = dayAndTimeRepository;
     }
-    
+
+    @Override
+    public List<DayAndTimeResponseDTO> findAllBySchedule(Long id) {
+        return dayAndTimeRepository.findAllBySchedule_IdSchedule(id).stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public DayAndTimeResponseDTO findById(Long id) {
         Optional<DayAndTime> optionalDayAndTime = dayAndTimeRepository.findById(id);
