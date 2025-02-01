@@ -31,8 +31,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseResponseDTO> findAll() {
-        return courseRepository.findByDeletedFalse().stream()
+    public List<CourseResponseDTO> findAllByMajor(Long id) {
+        return courseRepository.findAllByDeletedFalseAndMajor_IdMajor(id).stream()
                 .map(CourseServiceImpl::getCourseResponseDTO)
                 .collect(Collectors.toList());
     }

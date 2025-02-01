@@ -7,7 +7,7 @@ import com.horapp.presentation.dto.response.CourseResponseDTO;
 import java.util.List;
 
 public interface CourseService {
-    List<CourseResponseDTO> findAll();
+    List<CourseResponseDTO> findAllByMajor(Long id);
     List<Course> findAllByIdList(List<Long> idList);
     CourseResponseDTO findById(Long id);
     String save(CourseRequestDTO courseRequestDTO);
