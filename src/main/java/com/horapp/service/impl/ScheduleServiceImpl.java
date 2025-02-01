@@ -5,7 +5,6 @@ import com.horapp.persistence.entity.Schedule;
 import com.horapp.persistence.repository.ScheduleRepository;
 import com.horapp.presentation.dto.request.ScheduleRequestDTO;
 import com.horapp.presentation.dto.response.ScheduleResponseDTO;
-import com.horapp.service.CourseService;
 import com.horapp.service.ScheduleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +33,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
     @Override
+    @Transactional
     public ScheduleResponseDTO findById(Long id) {
         Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
         if(optionalSchedule.isEmpty()){
