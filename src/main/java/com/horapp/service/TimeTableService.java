@@ -7,7 +7,7 @@ import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 import java.util.List;
 
 public interface TimeTableService {
-    List<TimeTableResponseDTO> findAll();
+    List<TimeTableResponseDTO> findAllByCourse(Long id);
 
     TimeTableResponseDTO findById(Long id);
 

@@ -23,8 +23,8 @@ public class TimeTableServiceImpl implements TimeTableService {
     private UserService userService;
 
     @Override
-    public List<TimeTableResponseDTO> findAll() {
-        return timeTableRepository.findByDeletedFalse().stream()
+    public List<TimeTableResponseDTO> findAllByCourse(Long id) {
+        return timeTableRepository.findByDeletedFalseAndCourseId(id).stream()
                 .map(TimeTableServiceImpl::getTimeTableResponseDTO)
                 .collect(Collectors.toList());
     }
