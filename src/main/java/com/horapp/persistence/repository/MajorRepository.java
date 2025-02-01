@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MajorRepository extends JpaRepository<Major, Long> {
-    List<Major> findByDeletedFalse();
+    List<Major> findByDeletedFalseAndUserIsNull();
+    List<Major> findByDeletedFalseAndUser_IdUser(Long id);
 }

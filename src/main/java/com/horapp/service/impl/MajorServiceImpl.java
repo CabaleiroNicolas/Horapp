@@ -39,7 +39,14 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public List<MajorResponseDTO> findAll() {
-        return majorRepository.findByDeletedFalse().stream()
+        return majorRepository.findByDeletedFalseAndUserIsNull().stream()
+                .map(MajorServiceImpl::getMajorResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MajorResponseDTO> findAllByUser(Long id) {
+        return majorRepository.findByDeletedFalseAndUser_IdUser(id).stream()
                 .map(MajorServiceImpl::getMajorResponseDTO)
                 .collect(Collectors.toList());
     }

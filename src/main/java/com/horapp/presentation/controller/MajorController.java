@@ -22,6 +22,12 @@ public class MajorController {
     public ResponseEntity<List<MajorResponseDTO>> findAll(){
         return new ResponseEntity<>(majorService.findAll(), HttpStatus.OK);
     }
+
+    @GetMapping("/findAll/{id}")
+    public ResponseEntity<List<MajorResponseDTO>> findAllByUser(@PathVariable Long id){
+        return new ResponseEntity<>(majorService.findAllByUser(id), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MajorResponseDTO> findById(@PathVariable Long id){
         return new ResponseEntity<>(majorService.findById(id), HttpStatus.OK);
