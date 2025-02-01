@@ -18,16 +18,6 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
-    @GetMapping
-    public ResponseEntity<List<FeedbackResponseDTO>> findAll(){
-        return new ResponseEntity<>(feedbackService.findAll(),HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<FeedbackResponseDTO> findById(@PathVariable Long id){
-        return new ResponseEntity<>(feedbackService.findById(id),HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<FeedbackResponseDTO> save(@Valid @RequestBody FeedbackRequestDTO feedbackRequestDTO){
         return new ResponseEntity<>(feedbackService.save(feedbackRequestDTO), HttpStatus.CREATED);

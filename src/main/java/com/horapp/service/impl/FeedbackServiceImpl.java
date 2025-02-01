@@ -12,11 +12,9 @@ import com.horapp.service.CourseService;
 import com.horapp.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,24 +46,6 @@ public class FeedbackServiceImpl implements FeedbackService {
 
             return buildFeedbackResponseDTO(feedback);
 
-    }
-
-    @Override
-    public List<FeedbackResponseDTO> findAll() {
-        return feedbackRepository.findAll().stream()
-                .map(this::buildFeedbackResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public FeedbackResponseDTO findById(Long id) {
-        Optional<Feedback> optionalFeedback = feedbackRepository.findById(id);
-        if(optionalFeedback.isEmpty()){
-            throw new NotFoundException("Feedback not found with Id = " + id);
-        }
-            Feedback feedbackFind = optionalFeedback.get();
-        return buildFeedbackResponseDTO(feedbackFind);
     }
 
     private FeedbackResponseDTO buildFeedbackResponseDTO(Feedback feedback) {
