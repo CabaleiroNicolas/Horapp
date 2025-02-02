@@ -9,6 +9,8 @@ import com.horapp.presentation.dto.response.MajorResponseDTO;
 import com.horapp.service.MajorService;
 import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -39,6 +41,7 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public List<MajorResponseDTO> findAll() {
+
         return majorRepository.findByDeletedFalseAndUserIsNull().stream()
                 .map(MajorServiceImpl::getMajorResponseDTO)
                 .collect(Collectors.toList());

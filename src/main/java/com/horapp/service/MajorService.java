@@ -9,6 +9,8 @@ public interface MajorService {
     MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO);
     List<MajorResponseDTO> findAll();
     List<MajorResponseDTO> findAllByUser(Long id);
+
+    //No sabemos si se usa
     MajorResponseDTO findById(Long id);
     String deleteById(Long id);
 }
