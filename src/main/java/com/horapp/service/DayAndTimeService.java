@@ -3,6 +3,8 @@ package com.horapp.service;
 import com.horapp.presentation.dto.request.DayAndTimeRequestDTO;
 import com.horapp.presentation.dto.response.DayAndTimeResponseDTO;
 
+import java.util.List;
+
 
 public interface DayAndTimeService {
 
