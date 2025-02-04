@@ -46,6 +46,7 @@ public class Course {
         this.major = major;
         this.timeTable = timeTable;
         this.user = user;
+        this.deleted = false;
     }
 
     public Course(Long idCourse, String courseName, List<Schedule> scheduleList, User user, TimeTable timeTable, Major major, List<Feedback> feedbacks) {
