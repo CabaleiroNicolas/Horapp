@@ -19,15 +19,9 @@ import java.util.stream.Collectors;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
-    private final MajorService majorService;
-    private final UserService userService;
-    private final TimeTableService timeTableService;
 
-    public CourseServiceImpl(CourseRepository courseRepository, MajorService majorService, UserService userService, TimeTableService timeTableService) {
+    public CourseServiceImpl(CourseRepository courseRepository){
         this.courseRepository = courseRepository;
-        this.majorService = majorService;
-        this.userService = userService;
-        this.timeTableService = timeTableService;
     }
 
     @Override
