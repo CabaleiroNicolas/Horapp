@@ -51,6 +51,7 @@ public class CourseServiceTest {
         assertThrows(DataIntegrityViolationException.class, () -> courseService.save(courseRequestWithUser));
     }
 
+
     @Test
     void deleteTest_Success() {
         Long courseId = 100000L;
