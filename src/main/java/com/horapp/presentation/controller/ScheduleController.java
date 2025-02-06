@@ -4,7 +4,6 @@ import com.horapp.presentation.dto.request.ScheduleRequestDTO;
 import com.horapp.presentation.dto.response.ScheduleResponseDTO;
 import com.horapp.service.ScheduleService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +14,20 @@ import java.util.List;
 @RequestMapping("/schedules")
 public class ScheduleController {
 
-    @Autowired
-    private ScheduleService scheduleService;
+    private final ScheduleService scheduleService;
 
-    @GetMapping("/findAll/{id}")
-    public ResponseEntity<List<ScheduleResponseDTO>> findAllByCourse(@PathVariable Long id){
-        return new ResponseEntity<>(scheduleService.findAllByCourse(id), HttpStatus.OK);
+    public ScheduleController(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDTO> findById(@PathVariable Long id){
-        return new ResponseEntity<>(scheduleService.findById(id), HttpStatus.OK);
+    @GetMapping("/{courseId}")
+    public ResponseEntity<List<ScheduleResponseDTO>> findAllByCourse(@PathVariable Long courseId){
+        return new ResponseEntity<>(scheduleService.findAllByCourse(courseId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{scheduleId}")
+    public ResponseEntity<ScheduleResponseDTO> findById(@PathVariable Long scheduleId){
+        return new ResponseEntity<>(scheduleService.findById(scheduleId), HttpStatus.OK);
     }
 
     @PostMapping

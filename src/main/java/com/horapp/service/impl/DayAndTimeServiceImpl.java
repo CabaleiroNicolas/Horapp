@@ -21,7 +21,6 @@ public class DayAndTimeServiceImpl implements DayAndTimeService {
 
     private final DayAndTimeRepository dayAndTimeRepository;
 
-
     public DayAndTimeServiceImpl(DayAndTimeRepository dayAndTimeRepository) {
         this.dayAndTimeRepository = dayAndTimeRepository;
     }
