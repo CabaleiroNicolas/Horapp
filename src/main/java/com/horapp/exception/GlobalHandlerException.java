@@ -11,6 +11,7 @@ import com.horapp.exception.user.UserCreationException;
 import com.horapp.presentation.dto.response.exception.ExceptionResponse;
 import com.horapp.presentation.dto.response.exception.ValidationExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -39,6 +40,18 @@ public class GlobalHandlerException {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 exception.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR,
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ExceptionResponse> dataIntegrityVioletionHandler(DataIntegrityViolationException exception, HttpServletRequest request){
+        logger.error("Data integrity violation exception: ");
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST,
                 request.getMethod(),
                 request.getRequestURI()
         );
