@@ -25,7 +25,7 @@ public class MajorController {
         return new ResponseEntity<>(majorService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/user")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<MajorResponseDTO>> findAllByUser(@PathVariable Long userId){
         return new ResponseEntity<>(majorService.findAllByUser(userId), HttpStatus.OK);
     }
