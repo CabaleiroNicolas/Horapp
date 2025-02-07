@@ -7,22 +7,26 @@ import com.horapp.presentation.dto.request.UserRequestDTO;
 import com.horapp.presentation.dto.response.UserResponseDTO;
 import com.horapp.service.UserService;
 import com.horapp.util.Role;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserResponseDTO findById(Long id) {
@@ -78,5 +82,10 @@ public class UserServiceImpl implements UserService {
                 user.getName(),
                 user.getLastname(),
                 user.getEmail());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.findByUsername(username);
     }
 }

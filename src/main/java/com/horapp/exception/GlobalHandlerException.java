@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +51,18 @@ public class GlobalHandlerException {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 exception.getMessage(),
                 HttpStatus.NOT_FOUND,
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExceptionResponse> badCredentialsExceptionHandler(BadCredentialsException exception, HttpServletRequest request) {
+        logger.error("Login reject");
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST,
                 request.getMethod(),
                 request.getRequestURI()
         );
