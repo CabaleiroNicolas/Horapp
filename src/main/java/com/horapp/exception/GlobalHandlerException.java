@@ -11,9 +11,11 @@ import com.horapp.exception.user.UserCreationException;
 import com.horapp.presentation.dto.response.exception.ExceptionResponse;
 import com.horapp.presentation.dto.response.exception.ValidationExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,12 +46,36 @@ public class GlobalHandlerException {
         return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ExceptionResponse> dataIntegrityVioletionHandler(DataIntegrityViolationException exception, HttpServletRequest request){
+        logger.error("Data integrity violation exception: ");
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> notFoundException(NotFoundException exception, HttpServletRequest request) {
         logger.error("Resource not found: ", exception);
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 exception.getMessage(),
                 HttpStatus.NOT_FOUND,
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExceptionResponse> badCredentialsExceptionHandler(BadCredentialsException exception, HttpServletRequest request) {
+        logger.error("Login reject");
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST,
                 request.getMethod(),
                 request.getRequestURI()
         );

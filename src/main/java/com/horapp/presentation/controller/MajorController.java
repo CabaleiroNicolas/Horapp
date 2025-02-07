@@ -25,7 +25,7 @@ public class MajorController {
         return new ResponseEntity<>(majorService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/user")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<MajorResponseDTO>> findAllByUser(@PathVariable Long userId){
         return new ResponseEntity<>(majorService.findAllByUser(userId), HttpStatus.OK);
     }
@@ -36,8 +36,8 @@ public class MajorController {
         return new ResponseEntity<>(majorService.saveMajor(majorRequestDTO), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id){
-        return new ResponseEntity<>(majorService.deleteById(id), HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{majorId}")
+    public ResponseEntity<String> deleteById(@PathVariable Long majorId){
+        return new ResponseEntity<>(majorService.deleteById(majorId), HttpStatus.NO_CONTENT);
     }
 }

@@ -21,9 +21,14 @@ public class DayAndTimeController {
         this.dayAndTimeService = dayAndTimeService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DayAndTimeResponseDTO> findById(@PathVariable Long id){
-        return new ResponseEntity<>(dayAndTimeService.findById(id), HttpStatus.OK);
+    @GetMapping("/{dayAndTimeId}")
+    public ResponseEntity<DayAndTimeResponseDTO> findById(@PathVariable Long dayAndTimeId){
+        return new ResponseEntity<>(dayAndTimeService.findById(dayAndTimeId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{scheduleId}")
+    public ResponseEntity<List<DayAndTimeResponseDTO>> findAllBySchedule(@PathVariable Long scheduleId){
+        return new ResponseEntity<>(dayAndTimeService.findAllBySchedule(scheduleId), HttpStatus.OK);
     }
 
     @PostMapping

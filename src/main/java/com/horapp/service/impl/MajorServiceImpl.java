@@ -9,8 +9,6 @@ import com.horapp.presentation.dto.response.MajorResponseDTO;
 import com.horapp.service.MajorService;
 import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -24,19 +22,19 @@ public class MajorServiceImpl implements MajorService {
     @Autowired
     private MajorRepository majorRepository;
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
     @Override
     public MajorResponseDTO saveMajor(MajorRequestDTO majorRequestDTO) {
             Major major = new Major(
                     majorRequestDTO.majorName(),
                     false,
-                    majorRequestDTO.username() != null ? new User(majorRequestDTO.username()) : null
+                    majorRequestDTO.userId() != null ? new User(majorRequestDTO.userId()) : null
                     );
             majorRepository.save(major);
             return getMajorResponseDTO(major);
     }
+
 
 
     @Override

@@ -4,17 +4,20 @@ import com.horapp.presentation.dto.auth.AuthenticationRequest;
 import com.horapp.presentation.dto.auth.AuthenticationResponse;
 import com.horapp.service.auth.AuthenticationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/authentication")
+@RequestMapping("/auth")
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationService authenticationService;
 
-    @PostMapping("/authenticate")
+    private final AuthenticationService authenticationService;
+
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
+    @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody @Valid AuthenticationRequest authenticationRequest){
         AuthenticationResponse rsp = authenticationService.login(authenticationRequest);

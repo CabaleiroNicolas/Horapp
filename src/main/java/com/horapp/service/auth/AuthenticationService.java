@@ -4,10 +4,11 @@ import com.horapp.persistence.entity.User;
 import com.horapp.presentation.dto.auth.AuthenticationRequest;
 import com.horapp.presentation.dto.auth.AuthenticationResponse;
 import com.horapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -15,14 +16,16 @@ import java.util.Map;
 
 @Service
 public class AuthenticationService {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private JwtService jwtService;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    public AuthenticationService(UserService userService, JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.userService = userService;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+    }
 
 
     private Map<String, Object> generateExtraClaims(User user) {
@@ -35,11 +38,16 @@ public class AuthenticationService {
 
     public AuthenticationResponse login(AuthenticationRequest autRequest) {
 
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 autRequest.username(), autRequest.password()
         );
 
-        authenticationManager.authenticate(authentication);
+        try{
+            authenticationManager.authenticate(authentication);
+        }catch (AuthenticationException ex){
+            throw new BadCredentialsException("invalid username or password");
+        }
 
         User user = userService.findByUsername(autRequest.username());
         String jwt = jwtService.generateToken(user, generateExtraClaims(user));

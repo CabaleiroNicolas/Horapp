@@ -6,6 +6,7 @@ import com.horapp.config.security.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,7 +44,7 @@ public class SecurityConfig {
                     handling.accessDeniedHandler(customAccessDeniedHandler);
                 })
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.POST, "/authentication/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     auth.requestMatchers("/daysAndTimes/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/majors").permitAll();
