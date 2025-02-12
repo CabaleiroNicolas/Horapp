@@ -8,6 +8,7 @@ import com.horapp.service.TimeTableService;
 import com.horapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.util.List;
@@ -23,13 +24,7 @@ public class TimeTableServiceImpl implements TimeTableService {
     private UserService userService;
 
     @Override
-    public List<TimeTableResponseDTO> findAllByCourse(Long id) {
-        return timeTableRepository.findByDeletedFalseAndCourseId(id).stream()
-                .map(TimeTableServiceImpl::getTimeTableResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
+    @Transactional
     public TimeTableResponseDTO findById(Long id) {
         Optional<TimeTable> optionalTimeTable = timeTableRepository.findById(id);
         if(optionalTimeTable.isEmpty()){
