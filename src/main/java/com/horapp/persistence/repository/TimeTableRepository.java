@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface TimeTableRepository extends JpaRepository<TimeTable ,Long> {
-    @Query("SELECT t FROM TimeTable t JOIN t.courseList c WHERE t.deleted = false AND c.idCourse = :id")
-    List<TimeTable> findByDeletedFalseAndCourseId(@Param("id") Long id);
 }

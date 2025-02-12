@@ -6,4 +6,5 @@ DELETE FROM categories_fb;
 DELETE FROM feedbacks;
 DELETE FROM courses;
 DELETE FROM majors;
+DELETE FROM time_tables;
 DELETE FROM users;

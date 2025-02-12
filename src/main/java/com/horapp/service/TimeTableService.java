@@ -1,13 +1,10 @@
 package com.horapp.service;
 
-import com.horapp.persistence.entity.TimeTable;
-import com.horapp.presentation.dto.request.TimeTableRequestDTO;
 import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 
-import java.util.List;
 
 public interface TimeTableService {
-    List<TimeTableResponseDTO> findAllByCourse(Long id);
+
 
     TimeTableResponseDTO findById(Long id);
 
