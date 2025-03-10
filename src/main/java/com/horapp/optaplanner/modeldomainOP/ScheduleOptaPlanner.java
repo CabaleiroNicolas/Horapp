@@ -1,31 +1,49 @@
 package com.horapp.optaplanner.modeldomainOP;
 
 
-import java.util.ArrayList;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
+
 import java.util.Comparator;
 import java.util.List;
 
 
 public class ScheduleOptaPlanner {
+
+    @PlanningId
+    private Long id;
     private String courseGroup;
-
-    private ArrayList<DayAndTimeOptaPlanner> dayAndTimes;
-
-
-    //public ArrayList<DayAndTimeOptaPlanner> getDayAndTimes() {
-    //    return dayAndTimes;
-   //}
+    private List<DayAndTimeOptaPlanner> dayAndTimes;
+    private CourseOptaPlanner course;
 
 
     public ScheduleOptaPlanner() {
     }
 
-    public ScheduleOptaPlanner(String courseGroup, ArrayList<DayAndTimeOptaPlanner> dayAndTimes) {
+    public ScheduleOptaPlanner(String courseGroup, List<DayAndTimeOptaPlanner> dayAndTimes) {
         this.courseGroup = courseGroup;
         this.dayAndTimes = dayAndTimes;
     }
 
-    public void setDayAndTimes(ArrayList<DayAndTimeOptaPlanner> dayAndTimes) {
+    public <E> ScheduleOptaPlanner(List<E> es) {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public CourseOptaPlanner getCourse() {
+        return course;
+    }
+
+    public void setCourse(CourseOptaPlanner course) {
+        this.course = course;
+    }
+
+    public void setDayAndTimes(List<DayAndTimeOptaPlanner> dayAndTimes) {
         this.dayAndTimes = dayAndTimes;
     }
 

@@ -20,7 +20,6 @@ public class DayAndTime {
 
     private LocalTime endTime;
 
-    //Posiblemente necesite @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_schedule", nullable = false)
     private Schedule schedule;

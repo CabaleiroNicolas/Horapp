@@ -11,7 +11,7 @@ import java.util.List;
 public class CourseOptaPlanner {
 
     @PlanningId
-    private long id;
+    private Long id;
 
     @PlanningVariable(valueRangeProviderRefs = "schedulesRange")
     private ScheduleOptaPlanner AssignedSchedule;
@@ -29,6 +29,9 @@ public class CourseOptaPlanner {
         AssignedSchedule = assignedSchedule;
         this.availableSchedules = availableSchedules;
         this.courseName = courseName;
+    }
+
+    public CourseOptaPlanner(ScheduleOptaPlanner schedule1) {
     }
 
     public ScheduleOptaPlanner getAssignedSchedule() {
