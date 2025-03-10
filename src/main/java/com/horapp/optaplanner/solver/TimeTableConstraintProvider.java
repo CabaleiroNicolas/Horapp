@@ -15,13 +15,12 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
-       Constraint[] constraint = new Constraint[]{
+        return new Constraint[]{
                noOverlapConstraint(constraintFactory),
                minimizeTotalIdleTime(constraintFactory)
                //minimizeDistanceBetweenCourses(constraintFactory),
                //groupSchedulesOnSameDay(constraintFactory)
        };
-        return constraint;
     }
 
     Constraint noOverlapConstraint(ConstraintFactory constraintFactory) {

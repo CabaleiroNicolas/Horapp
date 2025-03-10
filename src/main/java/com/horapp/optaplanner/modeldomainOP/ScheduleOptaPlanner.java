@@ -19,13 +19,6 @@ public class ScheduleOptaPlanner {
     public ScheduleOptaPlanner() {
     }
 
-    public ScheduleOptaPlanner(String courseGroup, List<DayAndTimeOptaPlanner> dayAndTimes) {
-        this.courseGroup = courseGroup;
-        this.dayAndTimes = dayAndTimes;
-    }
-
-    public <E> ScheduleOptaPlanner(List<E> es) {
-    }
 
     public Long getId() {
         return id;
@@ -55,22 +48,8 @@ public class ScheduleOptaPlanner {
         this.courseGroup = courseGroup;
     }
 
-    public void sortDayAndTimes() {
-        dayAndTimes.sort(Comparator.naturalOrder());
-    }
-
     public List<DayAndTimeOptaPlanner> getDayAndTimes() {
-        if (dayAndTimes == null || dayAndTimes.isEmpty()) {
-            throw new IllegalStateException("No hay horarios definidos");
-        }
         return dayAndTimes;
     }
 
-    @Override
-    public String toString() {
-        return "ScheduleOptaPlanner{" +
-                "courseGroup='" + courseGroup + '\'' +
-                ", dayAndTimes=" + dayAndTimes +
-                '}';
-    }
 }

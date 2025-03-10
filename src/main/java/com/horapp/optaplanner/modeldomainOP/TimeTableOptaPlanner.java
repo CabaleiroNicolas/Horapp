@@ -20,22 +20,9 @@ public class TimeTableOptaPlanner {
     public TimeTableOptaPlanner() {
     }
 
-    public TimeTableOptaPlanner(List<CourseOptaPlanner> courses, HardSoftScore score) {
-        this.courses = courses;
-        this.score = score;
-    }
-
-    public <E> TimeTableOptaPlanner(List<E> course1) {
-    }
-
-    public List<DayAndTimeOptaPlanner> getAllDayAndTimes() {
-        return allDayAndTimes;
-    }
-
     public void setAllDayAndTimes(List<DayAndTimeOptaPlanner> allDayAndTimes) {
         this.allDayAndTimes = allDayAndTimes;
     }
-
     public List<CourseOptaPlanner> getCourses() {
         return courses;
     }
@@ -46,10 +33,6 @@ public class TimeTableOptaPlanner {
 
     public HardSoftScore getScore() {
         return score;
-    }
-
-    public void setScore(HardSoftScore score) {
-        this.score = score;
     }
 
 
