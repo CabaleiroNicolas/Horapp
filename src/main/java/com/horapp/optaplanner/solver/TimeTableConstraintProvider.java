@@ -1,5 +1,6 @@
 package com.horapp.optaplanner.solver;
 
+import com.horapp.optaplanner.OptaPlannerConstraints;
 import com.horapp.optaplanner.modeldomainOP.CourseOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.DayAndTimeOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.ScheduleOptaPlanner;
@@ -9,21 +10,38 @@ import org.optaplanner.core.api.score.stream.*;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 
 public class TimeTableConstraintProvider implements ConstraintProvider {
 
+    private final TimeTableOptaPlanner timeTable;
+
+    public TimeTableConstraintProvider(TimeTableOptaPlanner timeTable) {
+        this.timeTable = timeTable;
+    }
+
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
-       Constraint[] constraint = new Constraint[]{
-               noOverlapConstraint(constraintFactory),
-               minimizeTotalIdleTime(constraintFactory),
-               minimCoursePerDays(constraintFactory)
-               //groupSchedulesOnSameDay(constraintFactory)
-       };
-        return constraint;
+       List<Constraint> constraints = new ArrayList<>();
+
+       //Constraints por defecto
+        constraints.add(noOverlapConstraint(constraintFactory));
+        constraints.add(minimizeTotalIdleTime(constraintFactory));
+
+       if(timeTable.isConstraintActive(OptaPlannerConstraints.MINIM_COURSE_PER_DAYS)){
+           constraints.add(minimCoursePerDays(constraintFactory));
+       }
+       if(timeTable.isConstraintActive(OptaPlannerConstraints.EARLIEST_START_TIME)) {
+           constraints.add(enforceEarliestStartTime(constraintFactory));
+       }
+       if(timeTable.isConstraintActive(OptaPlannerConstraints.LATEST_END_TIME)){
+           constraints.add(enforceLatestEndTime(constraintFactory));
+       }
+
+        return constraints.toArray(new Constraint[0]);
     }
 
 
@@ -63,12 +81,10 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     //MINIMA CANTIDAD DE MATERIAS POR DIA
     Constraint minimCoursePerDays(ConstraintFactory constraintFactory) {
-
         return constraintFactory.forEach(CourseOptaPlanner.class)
                 .filter(course -> course.getAssignedSchedule() != null)
-                // Unir cada curso con todos los DayAndTimeOptaPlanner (problem facts)
+                // Unir con los DayAndTimeOptaPlanner (problem facts)
                 .join(DayAndTimeOptaPlanner.class)
-                // Filtrar solo los DayAndTime del horario asignado del curso
                 .filter((course, dayAndTime) ->
                         course.getAssignedSchedule().getDayAndTimes().contains(dayAndTime))
                 // Agrupar por día y contar cursos únicos
@@ -76,11 +92,18 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         (course, dayAndTime) -> dayAndTime.getDay(),
                         ConstraintCollectors.countDistinct((course, dayAndTime) -> course)
                 )
+                // Unir con TimeTable para obtener minCoursesPerDay
                 .join(TimeTableOptaPlanner.class)
-                .filter((day, courseCount, timetable) -> courseCount < timetable.getMinimumCoursePerDay())
-                .penalize(HardSoftScore.ONE_SOFT
+                // Filtrar días con menos cursos de los requeridos
+                .filter((day, courseCount, timetable) ->
+                        courseCount < timetable.getMinimumCoursePerDay() && courseCount > 0)
+                // Penalizar por CADA DÍA que incumple, multiplicando por la gravedad
+                .penalize(HardSoftScore.ONE_SOFT,
+                        (day, courseCount, timetable) ->
+                                // Penalización por día: (Diferencia * Penalty) o valor fijo
+                                (timetable.getMinimumCoursePerDay() - courseCount) * 100 // Ejemplo: 100 por curso faltante
                 )
-                .asConstraint("Minimize days with courses");
+                .asConstraint("Minimize days with courses below minimum");
     }
     //------------------------------------------------------------------------------------------------------------------
 

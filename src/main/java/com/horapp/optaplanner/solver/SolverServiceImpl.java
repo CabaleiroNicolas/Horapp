@@ -8,8 +8,6 @@ import com.horapp.optaplanner.modeldomainOP.TimeTableOptaPlanner;
 import com.horapp.optaplanner.presentation.mapper.ScheduleAssignedDTOMapper;
 import com.horapp.optaplanner.presentation.mapper.TimeTableOptaMapper;
 import com.horapp.persistence.entity.Course;
-import com.horapp.persistence.entity.Major;
-import com.horapp.persistence.entity.User;
 import com.horapp.service.CourseService;
 import com.horapp.service.MajorService;
 import com.horapp.service.UserService;

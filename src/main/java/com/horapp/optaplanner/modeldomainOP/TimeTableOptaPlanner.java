@@ -1,10 +1,12 @@
 package com.horapp.optaplanner.modeldomainOP;
 
+import com.horapp.optaplanner.OptaPlannerConstraints;
 import org.optaplanner.core.api.domain.solution.*;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @PlanningSolution
 public class TimeTableOptaPlanner {
@@ -22,6 +24,10 @@ public class TimeTableOptaPlanner {
     private LocalTime earliestStartTime;
     @ProblemFactProperty
     private LocalTime latestEndTime;
+
+    //Mapa de restricciones disponibles
+    @ProblemFactProperty
+    private Map<OptaPlannerConstraints, Boolean> constraints;
 
     public TimeTableOptaPlanner() {
     }
@@ -80,5 +86,13 @@ public class TimeTableOptaPlanner {
 
     public void setMinimumCoursePerDay(Integer minimumCoursePerDay) {
         this.minimumCoursePerDay = minimumCoursePerDay;
+    }
+
+    public boolean isConstraintActive(OptaPlannerConstraints constraint) {
+        return constraints.getOrDefault(constraint, false);
+    }
+
+    public void setConstraintActive(OptaPlannerConstraints constraintId, boolean active) {
+        constraints.put(constraintId, active);
     }
 }
