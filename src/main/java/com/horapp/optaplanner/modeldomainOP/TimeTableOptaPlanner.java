@@ -1,10 +1,9 @@
 package com.horapp.optaplanner.modeldomainOP;
 
-import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
-import org.optaplanner.core.api.domain.solution.PlanningScore;
-import org.optaplanner.core.api.domain.solution.PlanningSolution;
-import org.optaplanner.core.api.domain.solution.ProblemFactCollectionProperty;
+import org.optaplanner.core.api.domain.solution.*;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+
+import java.time.LocalTime;
 import java.util.List;
 
 @PlanningSolution
@@ -16,6 +15,13 @@ public class TimeTableOptaPlanner {
     private List<DayAndTimeOptaPlanner> allDayAndTimes;
     @PlanningScore
     private HardSoftScore score;
+
+    @ProblemFactProperty
+    private Integer minimumCoursePerDay;
+    @ProblemFactProperty
+    private LocalTime earliestStartTime;
+    @ProblemFactProperty
+    private LocalTime latestEndTime;
 
     public TimeTableOptaPlanner() {
     }
@@ -52,12 +58,27 @@ public class TimeTableOptaPlanner {
         this.score = score;
     }
 
+    public void setEarliestStartTime(LocalTime earliestStartTime) {
+        this.earliestStartTime = earliestStartTime;
+    }
 
-    @Override
-    public String toString() {
-        return "TimeTableOptaPlanner{" +
-                "courses=" + courses +
-                ", score=" + score +
-                '}';
+    public LocalTime getLatestEndTime() {
+        return latestEndTime;
+    }
+
+    public void setLatestEndTime(LocalTime latestEndTime) {
+        this.latestEndTime = latestEndTime;
+    }
+
+    public LocalTime getEarliestStartTime() {
+        return earliestStartTime;
+    }
+
+    public Integer getMinimumCoursePerDay() {
+        return minimumCoursePerDay;
+    }
+
+    public void setMinimumCoursePerDay(Integer minimumCoursePerDay) {
+        this.minimumCoursePerDay = minimumCoursePerDay;
     }
 }

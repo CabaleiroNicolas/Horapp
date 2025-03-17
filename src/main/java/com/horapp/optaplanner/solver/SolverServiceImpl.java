@@ -38,7 +38,7 @@ public class SolverServiceImpl implements SolverService{
             .withSolutionClass(TimeTableOptaPlanner.class) // Clase solución
             .withEntityClasses(CourseOptaPlanner.class) // Clases de entidades planificables
             .withConstraintProviderClass(TimeTableConstraintProvider.class)
-            .withTerminationSpentLimit(Duration.ofSeconds(5));
+            .withTerminationSpentLimit(Duration.ofSeconds(10));
 
 
     @Override
