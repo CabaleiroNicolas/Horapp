@@ -1,5 +1,6 @@
 package com.horapp.presentation.controller;
 
+import com.horapp.exception.time_table.ProblemNotResolvedException;
 import com.horapp.presentation.dto.request.TimeTableOptaRequestDTO;
 import com.horapp.presentation.dto.response.TimeTableOptaResponseDTO;
 import com.horapp.optaplanner.solver.SolverService;
@@ -71,9 +72,12 @@ public class TimeTableController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
 
     @PostMapping("/solve")
-    public ResponseEntity<TimeTableOptaResponseDTO> solver(@RequestBody TimeTableOptaRequestDTO timeTableOptaRequestDTO) {
+    public ResponseEntity<TimeTableOptaResponseDTO> solver(@RequestBody TimeTableOptaRequestDTO timeTableOptaRequestDTO,
+                                                           @RequestParam(required = false) String earliestTime,
+                                                           @RequestParam(required = false) String latestTime,
+                                                           @RequestParam(required = false) Integer minCourse) throws ProblemNotResolvedException {
 
-        TimeTableOptaResponseDTO solvedTimeTable = solverService.solveProblem(timeTableOptaRequestDTO);
+        TimeTableOptaResponseDTO solvedTimeTable = solverService.solveProblem(timeTableOptaRequestDTO,earliestTime,latestTime,minCourse);
         return ResponseEntity.ok(solvedTimeTable);
     }
 

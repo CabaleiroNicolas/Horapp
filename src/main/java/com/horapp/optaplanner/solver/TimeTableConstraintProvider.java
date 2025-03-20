@@ -1,12 +1,12 @@
 package com.horapp.optaplanner.solver;
 
-import com.horapp.optaplanner.OptaPlannerConstraints;
 import com.horapp.optaplanner.modeldomainOP.CourseOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.DayAndTimeOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.ScheduleOptaPlanner;
-import com.horapp.optaplanner.modeldomainOP.TimeTableOptaPlanner;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.stream.*;
+
+
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -14,33 +14,21 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-
 public class TimeTableConstraintProvider implements ConstraintProvider {
 
-    private final TimeTableOptaPlanner timeTable;
-
-    public TimeTableConstraintProvider(TimeTableOptaPlanner timeTable) {
-        this.timeTable = timeTable;
-    }
+    private final LocalTime earliestTime = LocalTime.of(14,0);
+    private final LocalTime latestTime = LocalTime.of(20,0);
+    private final Integer minCourses = 2;
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
        List<Constraint> constraints = new ArrayList<>();
 
-       //Constraints por defecto
         constraints.add(noOverlapConstraint(constraintFactory));
         constraints.add(minimizeTotalIdleTime(constraintFactory));
-
-       if(timeTable.isConstraintActive(OptaPlannerConstraints.MINIM_COURSE_PER_DAYS)){
-           constraints.add(minimCoursePerDays(constraintFactory));
-       }
-       if(timeTable.isConstraintActive(OptaPlannerConstraints.EARLIEST_START_TIME)) {
-           constraints.add(enforceEarliestStartTime(constraintFactory));
-       }
-       if(timeTable.isConstraintActive(OptaPlannerConstraints.LATEST_END_TIME)){
-           constraints.add(enforceLatestEndTime(constraintFactory));
-       }
-
+        constraints.add(minimCoursePerDays(constraintFactory));
+        constraints.add(enforceEarliestStartTime(constraintFactory));
+        constraints.add(enforceLatestEndTime(constraintFactory));
         return constraints.toArray(new Constraint[0]);
     }
 
@@ -92,16 +80,15 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         (course, dayAndTime) -> dayAndTime.getDay(),
                         ConstraintCollectors.countDistinct((course, dayAndTime) -> course)
                 )
-                // Unir con TimeTable para obtener minCoursesPerDay
-                .join(TimeTableOptaPlanner.class)
+
                 // Filtrar días con menos cursos de los requeridos
-                .filter((day, courseCount, timetable) ->
-                        courseCount < timetable.getMinimumCoursePerDay() && courseCount > 0)
+                .filter((day, courseCount) ->
+                        courseCount < /*minimCourse*/minCourses && courseCount > 0)
                 // Penalizar por CADA DÍA que incumple, multiplicando por la gravedad
                 .penalize(HardSoftScore.ONE_SOFT,
-                        (day, courseCount, timetable) ->
+                        (day, courseCount) ->
                                 // Penalización por día: (Diferencia * Penalty) o valor fijo
-                                (timetable.getMinimumCoursePerDay() - courseCount) * 100 // Ejemplo: 100 por curso faltante
+                                (1 - courseCount) * 100 // Ejemplo: 100 por curso faltante
                 )
                 .asConstraint("Minimize days with courses below minimum");
     }
@@ -124,6 +111,7 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         (day, dayTimeList) -> calculateTotalIdleTimeForDay(dayTimeList))
                 .asConstraint("Minimize total idle time");
     }
+
 
     // Calcula el tiempo muerto total entre clases consecutivas en un día
     private int calculateTotalIdleTimeForDay(List<DayAndTimeOptaPlanner> dayTimeList) {
@@ -157,20 +145,18 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(course -> course.getAssignedSchedule().getDayAndTimes(),
                                 dayAndTime -> List.of(dayAndTime)))
                 // Unir con TimeTable para obtener earliestStartTime
-                .join(TimeTableOptaPlanner.class)
                 // Filtrar bloques que empiezan antes de la hora mínima
-                .filter((course, dayAndTime, timeTable) ->
-                        dayAndTime.getStartTime().isBefore(timeTable.getEarliestStartTime()))
+                .filter((course, dayAndTime) ->
+                        dayAndTime.getStartTime().isBefore(earliestTime))
                 // Penalizar por la suma de minutos de inicio anticipado
                 .penalize(HardSoftScore.ONE_SOFT,
-                        (course, dayAndTime, timeTable) -> calculateEarlyMinutes(dayAndTime, timeTable))
+                        (course, dayAndTime) -> calculateEarlyMinutes(dayAndTime, earliestTime))
                 .asConstraint("No early classes");
     }
 
     // Método auxiliar para calcular minutos antes de earliestStartTime
-    private int calculateEarlyMinutes(DayAndTimeOptaPlanner dayAndTime, TimeTableOptaPlanner timeTable) {
-        LocalTime earliestStart = timeTable.getEarliestStartTime();
-        return (int) Duration.between(dayAndTime.getStartTime(), earliestStart).toMinutes();
+    private int calculateEarlyMinutes(DayAndTimeOptaPlanner dayAndTime, LocalTime time) {
+        return (int) Duration.between(dayAndTime.getStartTime(), time).toMinutes();
     }
     //------------------------------------------------------------------------------------------------------------------
 
@@ -183,21 +169,22 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(course -> course.getAssignedSchedule().getDayAndTimes(),
                                 dayAndTime -> List.of(dayAndTime)))
                 // Unir con TimeTable para obtener latestEndTime
-                .join(TimeTableOptaPlanner.class)
+
                 // Filtrar bloques que terminan después de la hora máxima
-                .filter((course, dayAndTime, timeTable) ->
-                        dayAndTime.getEndTime().isAfter(timeTable.getLatestEndTime()))
+                .filter((course, dayAndTime) ->
+                        dayAndTime.getEndTime().isAfter(latestTime))
                 // Penalizar por minutos excedidos
                 .penalize(HardSoftScore.ONE_SOFT,
-                        (course, dayAndTime, timeTable) -> calculateLateMinutes(dayAndTime, timeTable))
+                        (course, dayAndTime) -> calculateLateMinutes(dayAndTime, latestTime))
                 .asConstraint("No late classes");
     }
 
     // Método auxiliar para calcular minutos después de latestEndTime
-    private int calculateLateMinutes(DayAndTimeOptaPlanner dayAndTime, TimeTableOptaPlanner timeTable) {
-        LocalTime latestEnd = timeTable.getLatestEndTime();
-        return (int) Duration.between(latestEnd, dayAndTime.getEndTime()).toMinutes();
+    private int calculateLateMinutes(DayAndTimeOptaPlanner dayAndTime, LocalTime time) {
+        return (int) Duration.between(LocalTime.of(20,30), dayAndTime.getEndTime()).toMinutes();
     }
     //------------------------------------------------------------------------------------------------------------------
+
+
 
 }

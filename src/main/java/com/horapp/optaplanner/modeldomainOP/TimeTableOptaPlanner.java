@@ -1,14 +1,15 @@
 package com.horapp.optaplanner.modeldomainOP;
 
-import com.horapp.optaplanner.OptaPlannerConstraints;
 import org.optaplanner.core.api.domain.solution.*;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
+
 
 @PlanningSolution
+@Component
 public class TimeTableOptaPlanner {
 
     @PlanningEntityCollectionProperty
@@ -19,15 +20,11 @@ public class TimeTableOptaPlanner {
     private HardSoftScore score;
 
     @ProblemFactProperty
-    private Integer minimumCoursePerDay;
+    private final Integer minimumCoursePerDay = 1;
     @ProblemFactProperty
-    private LocalTime earliestStartTime;
+    private final LocalTime earliestStartTime = LocalTime.of(14,0);
     @ProblemFactProperty
-    private LocalTime latestEndTime;
-
-    //Mapa de restricciones disponibles
-    @ProblemFactProperty
-    private Map<OptaPlannerConstraints, Boolean> constraints;
+    private final LocalTime latestEndTime =  LocalTime.of(20,30);;
 
     public TimeTableOptaPlanner() {
     }
@@ -64,16 +61,9 @@ public class TimeTableOptaPlanner {
         this.score = score;
     }
 
-    public void setEarliestStartTime(LocalTime earliestStartTime) {
-        this.earliestStartTime = earliestStartTime;
-    }
 
     public LocalTime getLatestEndTime() {
         return latestEndTime;
-    }
-
-    public void setLatestEndTime(LocalTime latestEndTime) {
-        this.latestEndTime = latestEndTime;
     }
 
     public LocalTime getEarliestStartTime() {
@@ -84,15 +74,6 @@ public class TimeTableOptaPlanner {
         return minimumCoursePerDay;
     }
 
-    public void setMinimumCoursePerDay(Integer minimumCoursePerDay) {
-        this.minimumCoursePerDay = minimumCoursePerDay;
-    }
 
-    public boolean isConstraintActive(OptaPlannerConstraints constraint) {
-        return constraints.getOrDefault(constraint, false);
-    }
 
-    public void setConstraintActive(OptaPlannerConstraints constraintId, boolean active) {
-        constraints.put(constraintId, active);
-    }
 }

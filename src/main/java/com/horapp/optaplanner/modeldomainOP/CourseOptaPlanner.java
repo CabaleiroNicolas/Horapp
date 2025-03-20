@@ -20,6 +20,7 @@ public class CourseOptaPlanner {
     private List<ScheduleOptaPlanner> availableSchedules;
 
     private String courseName;
+    private TimeTableOptaPlanner timeTable;
 
     public CourseOptaPlanner() {
     }
@@ -66,13 +67,7 @@ public class CourseOptaPlanner {
         this.courseName = courseName;
     }
 
-    @Override
-    public String toString() {
-        return "CourseOptaPlanner{" +
-                "id=" + id +
-                ", AssignedSchedule=" + AssignedSchedule +
-                ", availableSchedules=" + availableSchedules +
-                ", courseName='" + courseName + '\'' +
-                '}';
+    public TimeTableOptaPlanner getTimeTable() {
+        return timeTable;
     }
 }
