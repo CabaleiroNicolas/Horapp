@@ -6,9 +6,7 @@ import com.horapp.optaplanner.modeldomainOP.ScheduleOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.TimeTableOptaPlanner;
 import com.horapp.persistence.entity.Course;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TimeTableOptaMapper {
@@ -27,32 +25,37 @@ public class TimeTableOptaMapper {
                             .map(schedule -> {
 
                                 ScheduleOptaPlanner scheduleOpta = new ScheduleOptaPlanner();
-
                                 scheduleOpta.setCourseGroup(schedule.getCourseGroup());
+                                scheduleOpta.setId(schedule.getIdSchedule());
+                                scheduleOpta.setCourse(courseOpta);
 
                                 // Mapear los días y horas
                                 List<DayAndTimeOptaPlanner> dayAndTimeOptaList = schedule.getDaysAndTimes().stream()
-                                        .map(dayAndTime -> {
-                                            DayAndTimeOptaPlanner dayAndTimeOpta = new DayAndTimeOptaPlanner();
-                                            dayAndTimeOpta.setDay(dayAndTime.getDay());
-                                            dayAndTimeOpta.setStartTime(dayAndTime.getStartTime());
-                                            dayAndTimeOpta.setEndTime(dayAndTime.getEndTime());
-                                            return dayAndTimeOpta;
-                                        })
-                                        .collect(Collectors.toList());
+                                        .map(dayAndTime -> new DayAndTimeOptaPlanner(
+                                               dayAndTime.getDay(),
+                                               dayAndTime.getStartTime(),
+                                               dayAndTime.getEndTime()
+                                       )).toList();
 
-                                scheduleOpta.setDayAndTimes(new ArrayList<>(dayAndTimeOptaList));
+                                scheduleOpta.setDayAndTimes(List.copyOf(dayAndTimeOptaList));
                                 return scheduleOpta;
                             })
-                            .filter(Objects::nonNull) // Eliminar nulos resultantes del filtro
-                            .collect(Collectors.toList());
+                            .toList();
 
                     courseOpta.setAvailableSchedules(scheduleOptaList);
                     return courseOpta;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
-        timeTableOptaPlanner.setCourses(new ArrayList<>(courseOptaList));
+        // Recolectar todos los DayAndTime de todos los Schedule
+        List<DayAndTimeOptaPlanner> allDayAndTimes = courseOptaList.stream()
+                .flatMap(course -> course.getAvailableSchedules().stream())
+                .flatMap(schedule -> schedule.getDayAndTimes().stream())
+                .distinct()
+                .toList();
+
+        timeTableOptaPlanner.setAllDayAndTimes(List.copyOf(allDayAndTimes));
+        timeTableOptaPlanner.setCourses(List.copyOf(courseOptaList));
         return timeTableOptaPlanner;
     }
 }

@@ -20,7 +20,6 @@ public class DayAndTime {
 
     private LocalTime endTime;
 
-    //Posiblemente necesite @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_schedule", nullable = false)
     private Schedule schedule;
@@ -35,50 +34,21 @@ public class DayAndTime {
         this.startTime = startTime;
     }
 
-    public DayAndTime(long idDayAndTime, DayOfWeek day, LocalTime startTime, LocalTime endTime, Schedule schedule) {
-        this.idDayAndTime = idDayAndTime;
-        this.day = day;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.schedule = schedule;
-    }
-
     public long getIdDayAndTime() {
         return idDayAndTime;
     }
-
-    public void setIdDayAndTime(long idDayAndTime) {
-        this.idDayAndTime = idDayAndTime;
-    }
-
     public DayOfWeek getDay() {
         return day;
     }
-
-    public void setDay(DayOfWeek day) {
-        this.day = day;
-    }
-
     public LocalTime getStartTime() {
         return startTime;
     }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
     public LocalTime getEndTime() {
         return endTime;
     }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
     public Schedule getSchedule() {
         return schedule;
     }
-
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
     }

@@ -4,95 +4,100 @@ import com.horapp.optaplanner.modeldomainOP.CourseOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.DayAndTimeOptaPlanner;
 import com.horapp.optaplanner.modeldomainOP.ScheduleOptaPlanner;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.stream.Constraint;
-import org.optaplanner.core.api.score.stream.ConstraintFactory;
-import org.optaplanner.core.api.score.stream.ConstraintProvider;
-import org.optaplanner.core.api.score.stream.Joiners;
+import org.optaplanner.core.api.score.stream.*;
 
+import java.time.Duration;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class TimeTableConstraintProvider implements ConstraintProvider {
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
-       Constraint[] constraint = new Constraint[]{
+        return new Constraint[]{
                noOverlapConstraint(constraintFactory),
-               minimizeDistanceBetweenCourses(constraintFactory),
-               groupSchedulesOnSameDay(constraintFactory)
+               minimizeTotalIdleTime(constraintFactory)
+               //minimizeDistanceBetweenCourses(constraintFactory),
+               //groupSchedulesOnSameDay(constraintFactory)
        };
-        return constraint;
     }
 
     Constraint noOverlapConstraint(ConstraintFactory constraintFactory) {
-        return constraintFactory.forEachUniquePair(CourseOptaPlanner.class)
-                .filter((course1, course2) -> {
-                    ScheduleOptaPlanner schedule1 = course1.getAssignedSchedule();
-                    System.out.println("Schedule 1 " +schedule1);
-                    ScheduleOptaPlanner schedule2 = course2.getAssignedSchedule();
-                    System.out.println("Schedule 2 "+ schedule2);
-                    if (schedule1 == null || schedule2 == null) {
-                        return false; // Ignorar cursos sin horarios asignados
-                    }
-
-                    // Verificar si se solapan los horarios de los cursos
-                    for (DayAndTimeOptaPlanner dayTime1 : schedule1.getDayAndTimes()) {
-                        for (DayAndTimeOptaPlanner dayTime2 : schedule2.getDayAndTimes()) {
-                            if (dayTime1.getDay().equals(dayTime2.getDay())
-                                    && dayTime1.getStartTime().isBefore(dayTime2.getEndTime())
-                                    && dayTime1.getEndTime().isAfter(dayTime2.getStartTime())) {
-                                return true; // Existe un solapamiento
-                            }
-                        }
-                    }
-                    return false;
-                })
+        return constraintFactory
+                // Iterar sobre todos los pares únicos de cursos
+                .forEachUniquePair(CourseOptaPlanner.class,
+                        // Ambos cursos deben tener un horario asignado
+                        Joiners.filtering((c1, c2) ->
+                                c1.getAssignedSchedule() != null &&
+                                        c2.getAssignedSchedule() != null
+                        ),
+                        // Al menos un día en común con superposición de horarios
+                        Joiners.filtering((c1, c2) ->
+                                haveOverlapOnAnyDay(
+                                        c1.getAssignedSchedule(),
+                                        c2.getAssignedSchedule()
+                                )
+                        )
+                )
+                // Penalizar como Hard (una penalización por par conflictivo)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("No overlap");
     }
 
-
-
-
-    private Constraint minimizeDistanceBetweenCourses(ConstraintFactory constraintFactory) {
-        return constraintFactory.forEachUniquePair(CourseOptaPlanner.class)
-                .filter((course1, course2) -> course1.getAssignedSchedule()
-                        .getDayAndTimes().stream().anyMatch(dayAndTime1 ->
-                                course2.getAssignedSchedule()
-                                        .getDayAndTimes().stream().noneMatch(dayAndTime1::overlaps)))
-                .penalize(
-                        HardSoftScore.ONE_SOFT,
-                        (course1, course2) ->
-                                calculateDistance(course1, course2))
-                .asConstraint("Minimize distance between courses");
+    // Método auxiliar para detectar superposición en cualquier día
+    private boolean haveOverlapOnAnyDay(ScheduleOptaPlanner s1, ScheduleOptaPlanner s2) {
+        return s1.getDayAndTimes().stream()
+                .anyMatch(dt1 -> s2.getDayAndTimes().stream()
+                        .anyMatch(dt2 ->
+                                dt1.getDay() == dt2.getDay() && // Mismo día
+                                        dt1.getStartTime().isBefore(dt2.getEndTime()) &&
+                                        dt1.getEndTime().isAfter(dt2.getStartTime()) // Superposición
+                        )
+                );
     }
 
-    private int calculateDistance(CourseOptaPlanner course1, CourseOptaPlanner course2) {
-        return course1.getAssignedSchedule().getDayAndTimes().stream()
-                .flatMap(dayAndTime1 -> course2.getAssignedSchedule()
-                        .getDayAndTimes().stream()
-                        .map(dayAndTime2 -> Math.abs(
-                                (int) java.time.Duration.between(
-                                        dayAndTime1.getEndTime(), dayAndTime2.getStartTime()).toMinutes())))
-                .min(Integer::compareTo)
-                .orElse(0);
-    }
 
-    private Constraint groupSchedulesOnSameDay(ConstraintFactory constraintFactory) {
+
+
+
+    Constraint minimizeTotalIdleTime(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(CourseOptaPlanner.class)
-                .join(CourseOptaPlanner.class,
-                        Joiners.filtering((course1, course2) -> {
-                            if (course1.getAssignedSchedule() == null || course2.getAssignedSchedule() == null) {
-                                return false;
-                            }
-                            return course1.getAssignedSchedule().getDayAndTimes().stream()
-                                    .anyMatch(dayTime1 -> course2.getAssignedSchedule().getDayAndTimes().stream()
-                                            .anyMatch(dayTime2 -> dayTime1.getDay().equals(dayTime2.getDay())));
-                        }))
-                .filter((course1, course2) -> !course1.equals(course2))
-                .reward(
-                        HardSoftScore.ofSoft(100),
-                        (course1, course2) -> 1 // Recompensa por agrupar cursos el mismo día
+                .filter(course -> course.getAssignedSchedule() != null)
+                // Unir con DayAndTimeOptaPlanner (problem fact)
+                .join(DayAndTimeOptaPlanner.class)
+                .filter((course, dayAndTime) ->
+                        course.getAssignedSchedule().getDayAndTimes().contains(dayAndTime))
+                .groupBy(
+                        (course, dayAndTime) -> dayAndTime.getDay(),
+                        ConstraintCollectors.toList((course, dayAndTime) -> dayAndTime)
                 )
-                .asConstraint("Group schedules on the same day");
+                .penalize(HardSoftScore.ONE_SOFT,
+                        (day, dayTimeList) -> calculateTotalIdleTimeForDay(dayTimeList))
+                .asConstraint("Minimize total idle time");
     }
+
+    // Calcula el tiempo muerto total entre clases consecutivas en un día
+    private int calculateTotalIdleTimeForDay(List<DayAndTimeOptaPlanner> dayTimeList) {
+        if (dayTimeList.size() < 2) {
+            return 0; // No hay tiempo muerto si hay menos de 2 clases
+        }
+
+        // Ordenar los bloques por hora de inicio
+        List<DayAndTimeOptaPlanner> sorted = dayTimeList.stream()
+                .sorted(Comparator.comparing(DayAndTimeOptaPlanner::getStartTime))
+                .toList();
+
+        int totalIdle = 0;
+        for (int i = 1; i < sorted.size(); i++) {
+            DayAndTimeOptaPlanner prev = sorted.get(i - 1);
+            DayAndTimeOptaPlanner curr = sorted.get(i);
+            if (prev.getEndTime().isBefore(curr.getStartTime())) {
+                totalIdle += (int) Duration.between(prev.getEndTime(), curr.getStartTime()).toMinutes();
+            }
+        }
+        return totalIdle;
+    }
+
+
 }

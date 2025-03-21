@@ -50,7 +50,6 @@ public class SolverServiceImpl implements SolverService{
 
         // Mapear a TimeTableOptaPlanner
         TimeTableOptaPlanner problem = TimeTableOptaMapper.mapToTimeTableOptaPlanner(courses);
-        problem.sortSchedules();
 
         TimeTableOptaPlanner solvedTimeTable = solver.solve(problem);
 
