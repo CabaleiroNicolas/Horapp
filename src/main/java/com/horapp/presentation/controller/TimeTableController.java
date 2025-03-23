@@ -1,11 +1,14 @@
 package com.horapp.presentation.controller;
 
+import com.horapp.exception.time_table.ProblemNotResolvedException;
 import com.horapp.presentation.dto.request.TimeTableOptaRequestDTO;
 import com.horapp.presentation.dto.response.TimeTableOptaResponseDTO;
 import com.horapp.optaplanner.solver.SolverService;
 import com.horapp.presentation.dto.response.TimeTableResponseDTO;
 import com.horapp.service.TimeTableService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,12 +31,34 @@ public class TimeTableController {
         this.solverService = solverService;
     }
 
-
     @Operation(
             summary = "..",
             description = "..",
+            parameters ={
+                    @Parameter(
+                            name = "earliestTime",
+                            in = ParameterIn.QUERY,
+                            description = "Horario minimo en el que se pueden programar las clases (debe estar en formato HH:mm y EARLIEST_START_TIME activado)",
+                            required = false,
+                            example = "10:50"
+                    ),
+                    @Parameter(
+                            name = "latestTime",
+                            in = ParameterIn.QUERY,
+                            description = "Horario maximo en el que se pueden programar las clases (debe estar en formato HH:mm y LATEST_START_TIME activado)",
+                            required = false,
+                            example = "23:30"
+                    ),
+                    @Parameter(
+                            name = "minCourse",
+                            in = ParameterIn.QUERY,
+                            description = "cantidad minima de materia por dia y MINIM_COURSE_PER_DAYS activado)",
+                            required = false,
+                            example = "2"
+                    )
+            },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Request body con la lista de cursos a ordenar con sus respectivas comisiones",
+                    description = "Request body con los ID de los cursos que se desean ordenar",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
@@ -47,10 +72,12 @@ public class TimeTableController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
 
     @PostMapping("/solve")
-    public ResponseEntity<TimeTableOptaResponseDTO> solver(@RequestBody TimeTableOptaRequestDTO timeTableOptaRequestDTO) {
+    public ResponseEntity<TimeTableOptaResponseDTO> solver(@RequestBody TimeTableOptaRequestDTO timeTableOptaRequestDTO,
+                                                           @RequestParam(required = false) String earliestTime,
+                                                           @RequestParam(required = false) String latestTime,
+                                                           @RequestParam(required = false) Integer minCourse) throws ProblemNotResolvedException {
 
-        TimeTableOptaResponseDTO solvedTimeTable = solverService.solveProblem(timeTableOptaRequestDTO);
-
+        TimeTableOptaResponseDTO solvedTimeTable = solverService.solveProblem(timeTableOptaRequestDTO,earliestTime,latestTime,minCourse);
         return ResponseEntity.ok(solvedTimeTable);
     }
 

@@ -11,6 +11,7 @@ import com.horapp.exception.user.UserCreationException;
 import com.horapp.presentation.dto.response.exception.ExceptionResponse;
 import com.horapp.presentation.dto.response.exception.ValidationExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,18 @@ public class GlobalHandlerException {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ExceptionResponse> dataIntegrityVioletionHandler(DataIntegrityViolationException exception, HttpServletRequest request){
         logger.error("Data integrity violation exception: ");
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ExceptionResponse> badRequestExceptionHandler(BadRequestException exception, HttpServletRequest request){
+        logger.warn("Error en la solicitud: "+exception.getMessage());
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 exception.getMessage(),
                 HttpStatus.BAD_REQUEST,
@@ -170,7 +183,6 @@ public class GlobalHandlerException {
         );
         return ResponseEntity.status(exceptionResponse.getStatus()).body(exceptionResponse);
     }
-
 
 
 }
