@@ -25,44 +25,24 @@ public class CourseOptaPlanner {
     public CourseOptaPlanner() {
     }
 
-    public CourseOptaPlanner(long id, ScheduleOptaPlanner assignedSchedule, List<ScheduleOptaPlanner> availableSchedules, String courseName) {
-        this.id = id;
-        AssignedSchedule = assignedSchedule;
-        this.availableSchedules = availableSchedules;
-        this.courseName = courseName;
-    }
-
-    public CourseOptaPlanner(ScheduleOptaPlanner schedule1) {
-    }
-
     public ScheduleOptaPlanner getAssignedSchedule() {
         return AssignedSchedule;
     }
-
-    public void setAssignedSchedule(ScheduleOptaPlanner assignedSchedule) {
-        AssignedSchedule = assignedSchedule;
-    }
-
     public String getCourseName() {
         return courseName;
     }
-
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
-
     public List<ScheduleOptaPlanner> getAvailableSchedules() {
         return availableSchedules;
     }
-
     public void setAvailableSchedules(List<ScheduleOptaPlanner> availableSchedules) {
         this.availableSchedules = availableSchedules;
     }
-
     public void setCourseName(String courseName) {
         this.courseName = courseName;
     }
@@ -70,4 +50,5 @@ public class CourseOptaPlanner {
     public TimeTableOptaPlanner getTimeTable() {
         return timeTable;
     }
+
 }

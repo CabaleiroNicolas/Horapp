@@ -22,6 +22,7 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
+
        List<Constraint> constraints = new ArrayList<>();
 
         constraints.add(noOverlapConstraint(constraintFactory));

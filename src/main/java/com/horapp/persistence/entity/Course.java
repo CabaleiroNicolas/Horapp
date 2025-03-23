@@ -11,26 +11,19 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "course_seq_gen")
     @SequenceGenerator(name = "course_seq_gen", sequenceName = "courses_id_seq", allocationSize = 1)
     private Long idCourse;
-
     private String courseName;
-
     private Boolean deleted;
-
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "course")
     private List<Schedule> scheduleList;
-
     @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
-
     @ManyToOne
     @JoinColumn(name = "id_time_table")
     private TimeTable timeTable;
-
     @ManyToOne
     @JoinColumn(name = "id_major")
     private Major major;
-
     @OneToMany(fetch = FetchType.LAZY ,mappedBy = "course")
     private List<Feedback> feedbacks;
 

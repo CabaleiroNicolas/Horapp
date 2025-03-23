@@ -30,20 +30,6 @@ public class DayAndTimeOptaPlanner implements Comparable<DayAndTimeOptaPlanner>{
     }
 
     @Override
-    public String toString() {
-        return "DayAndTimeOptaPlanner{" +
-                "day=" + day +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                '}';
-    }
-
-    public boolean overlaps(DayAndTimeOptaPlanner other) {
-        return day.equals(other.day) &&
-                !(endTime.isBefore(other.startTime) || startTime.isAfter(other.endTime));
-    }
-
-    @Override
     public int compareTo(DayAndTimeOptaPlanner other) {
         int dayComparison = day.compareTo(other.day);
         if (dayComparison != 0) {

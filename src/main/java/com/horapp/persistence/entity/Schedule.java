@@ -11,12 +11,9 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_seq_gen")
     @SequenceGenerator(name = "schedule_seq_gen", sequenceName = "schedules_id_seq", allocationSize = 1)
     private Long idSchedule;
-
     private String courseGroup;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     private List<DayAndTime> daysAndTimes;
-
     @ManyToOne
     @JoinColumn(name = "id_course")
     private Course course;
